@@ -3,7 +3,9 @@ import Navbar from "./components/Navbar";
 import {Route, Routes} from 'react-router-dom'
 import Blog from "./pages/Blog";
 import Home from "./pages/Home";
-
+import Login from "./pages/Login"
+import Register from "./pages/Register";
+import OtpVerify from "./pages/OtpVerify";
 
 function App() {
   return (
@@ -11,6 +13,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/blog/:id" element={<Blog/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/Register" element={<Register/>}/>
+        <Route path="/otp" element={<OtpVerify/>}/>
+
+
 
       </Routes>
     </div>
