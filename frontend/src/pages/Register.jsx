@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
- 
-
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -13,9 +11,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  
-
- 
 
   const validateForm = () => {
     const newErrors = {};
@@ -41,16 +36,18 @@ const Register = () => {
       const res = await fetch('http://127.0.0.1:8000/blog/user/register/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',},
+          'Content-Type': 'application/json',
+          
+        },
         body: JSON.stringify({ username, email, phone, password }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'you have already an account');
+      if (!res.ok) throw new Error(data.message || 'You already have an account');
+
       alert('Registration successful');
       const userId = data?.id || data?.user_id;
       navigate(userId ? `/otp/${userId}` : '/otp');
-
     } catch (err) {
       setErrors({ server: err.message });
     } finally {
