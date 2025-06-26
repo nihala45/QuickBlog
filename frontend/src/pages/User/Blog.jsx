@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { blog_data, assets, comments_data } from '../assets/assets';
-import Navbar from '../components/Navbar';
+
+import { blog_data, assets, comments_data } from '../../assets/assets';
+import Navbar from '../../components/User/Navbar';
 import Moment from 'moment';
-import Footer from '../components/Footer'
-import Loader from '../components/Loader';
+import Footer from '../../components/User/Footer'
+import Loader from '../../components/User/Loader'
 const Blog = () => {
   const { id } = useParams();
   const [data, setData] = useState(null);

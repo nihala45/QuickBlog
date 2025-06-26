@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../utils/token';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -25,7 +26,7 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const signupSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -33,19 +34,21 @@ const Register = () => {
     setErrors({});
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/blog/user/register/', {
+      const response = await fetch(`${BASE_URL}/account/user/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          
         },
         body: JSON.stringify({ username, email, phone, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'You already have an account');
+      const data = await response.json();
 
-      alert('Registration successful');
+      if (!response.ok) {
+        throw new Error(data.email || data.phone || data.message || 'Registration failed');
+      }
+
+      alert('Registration successful. Please check your email for OTP.');
       const userId = data?.id || data?.user_id;
       navigate(userId ? `/otp/${userId}` : '/otp');
     } catch (err) {
@@ -66,7 +69,7 @@ const Register = () => {
 
         {errors.server && <p className="text-red-500 text-sm text-center mb-4">{errors.server}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <form onSubmit={signupSubmit} className="space-y-4" noValidate>
           <div>
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
             <input

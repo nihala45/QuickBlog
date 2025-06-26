@@ -1,9 +1,9 @@
 import React from 'react'
-import { blogCategories } from '../assets/assets'
+import { blogCategories } from '../../assets/assets'
 import { useState } from 'react'
 import { motion } from "motion/react"
 import BlogCard from './BlogCard'
-import { blog_data } from '../assets/assets'
+import { blog_data } from '../../assets/assets'
 
 const BlogList = () => {
     

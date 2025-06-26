@@ -1,12 +1,11 @@
 import React from "react";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/User/Navbar";
 import {Route, Routes} from 'react-router-dom'
-import Blog from "./pages/Blog";
-import Home from "./pages/Home";
-import Login from "./pages/Login"
-import Register from "./pages/Register";
-import OtpVerify from "./pages/OtpVerify";
-
+import Blog from "./pages/User/Blog";
+import Home from "./pages/User/Home";
+import Register from "./pages/User/Register";
+import OtpVerify from "./pages/User/OtpVerify";
+import Login from "./pages/User/Login"
 function App() {
   return (
     <div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { assets } from '../assets/assets'
+import { assets } from '../../assets/assets'
 const Header = () => {
   return (
     <div className='mx-8 sm:mx-16 xl:mx-24 relative'>

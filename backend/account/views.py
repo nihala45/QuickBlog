@@ -17,46 +17,48 @@ import pyotp
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
-
-@method_decorator(csrf_exempt, name='dispatch')
-class RegisterView(generics.CreateAPIView):
+class UserRegisterView(APIView):
     permission_classes = [AllowAny]
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
-    def perform_create(self, serializer):
-        email = serializer.validated_data.get('email')
-        phone = serializer.validated_data.get('phone')
-
-        if User.objects.filter(email__iexact=email, is_email_verified=True).exists():
-            raise serializers.ValidationError({"email": "This email is already verified and registered."})
-
-  
-        User.objects.filter(email__iexact=email, is_email_verified=False).delete()
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get('email')
+            phone = serializer.validated_data.get('phone')
 
        
-        if User.objects.filter(phone=phone).exists():
-            raise serializers.ValidationError({"phone": "This phone number is already taken."})
+            if User.objects.filter(email__iexact=email, is_email_verified=True).exists():
+                return Response({"email": "This email is already verified and registered."}, status=status.HTTP_400_BAD_REQUEST)
 
+            
+            User.objects.filter(email__iexact=email, is_email_verified=False).delete()
 
-        otp_secret = pyotp.random_base32()
-        totp = pyotp.TOTP(otp_secret, interval=300) 
-        otp = totp.now()
-        print('this is the otp',':',otp)
+            
+            if User.objects.filter(phone=phone).exists():
+                return Response({"phone": "This phone number is already taken."}, status=status.HTTP_400_BAD_REQUEST)
 
-    
-        user = serializer.save(email_otp=otp)
+     
+            otp_secret = pyotp.random_base32()
+            totp = pyotp.TOTP(otp_secret, interval=300)  
+            otp = totp.now()
+            print('Generated OTP:', otp)
 
-      
-        send_mail(
-            subject='Email Verification OTP',
-            message=f'Hi {user.username},\n\nYour OTP is: {otp}\nThis is valid for 5 minutes.',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )        
-        
-        return user
+            
+            user = serializer.save(email_otp=otp)
+
+           
+            try:
+                send_mail(
+                    subject='Email Verification OTP',
+                    message=f'Hi {user.username},\n\nYour OTP is: {otp}\nIt is valid for 5 minutes.',
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                return Response({"msg": "Failed to send OTP email", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return Response({'msg': 'Registration Successful. OTP sent to your email.'}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
