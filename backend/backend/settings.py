@@ -4,6 +4,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 pymysql.install_as_MySQLdb()
+print("SECRETTTTTTTTTTTTTTTTTTTTTTTTTttttt_KEY:", config("SECRET_KEY")) 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -119,7 +120,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'account.User'
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True
