@@ -14,6 +14,7 @@ import UserLayout from './pages/User/UserLayout'
 import UserDashboard from "./pages/User/UserDashboard";
 import AddBlog from "./pages/User/AddBlog";
 import ListBlog from "./pages/User/ListBlog";
+import AddCategories from './pages/Admin/AddCategories'
 function App() {
   return (
     <div>
@@ -30,6 +31,8 @@ function App() {
         <Route path="/admin" element={<Layout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="list-users" element={<ListUsers />} />
+          <Route path="list-categories" element={<AddCategories/>} />
+
         </Route>
 
         <Route path="/userdashboard" element={<UserLayout />}>

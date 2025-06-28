@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import { AuthContext } from '../../context/AuthContext';
 
+
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +18,7 @@ const AdminLogin = () => {
     setLoading(true);
     
     try {
-      const res = await api.post('admin/login/', {
+      const res = await api.post('adminside/login/', {
         email,
         password,
       });
@@ -31,7 +32,7 @@ const AdminLogin = () => {
       }
 
       login(data);
-      navigate('/admin-dashboard');
+      navigate('/admin');
     } catch (err) {
       console.error(err);
       setError(
