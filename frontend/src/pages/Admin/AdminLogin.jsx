@@ -15,9 +15,9 @@ const AdminLogin = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+    
     try {
-      const res = await api.post('account/user/login/', {
+      const res = await api.post('admin/login/', {
         email,
         password,
       });
@@ -35,9 +35,9 @@ const AdminLogin = () => {
     } catch (err) {
       console.error(err);
       setError(
+        err.response?.data?.detail ||
         err.response?.data?.error ||
-          err.response?.data?.detail ||
-          'Login failed'
+        'Login failed.'
       );
     } finally {
       setLoading(false);
@@ -56,7 +56,9 @@ const AdminLogin = () => {
           <h1 className="text-3xl font-bold text-blue-700">
             QuickBlog Admin
           </h1>
-          <p className="text-gray-500">Login to manage your platform</p>
+          <p className="text-gray-500 text-sm">
+            Login to manage your platform
+          </p>
         </div>
 
         {error && (
@@ -71,7 +73,7 @@ const AdminLogin = () => {
             placeholder="Admin Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-400 transition"
             required
           />
           <input
@@ -79,13 +81,13 @@ const AdminLogin = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-400 transition"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-semibold transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-semibold transition duration-200 transform hover:scale-105"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
