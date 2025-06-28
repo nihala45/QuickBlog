@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../utils/token';
+import { AuthContext } from '../../context/AuthContext';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -12,6 +13,10 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+   const handleLogout = () => {
+    logout();
+    navigate('/register');
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -34,7 +39,7 @@ const Register = () => {
     setErrors({});
 
     try {
-      const response = await fetch(`${BASE_URL}/account/user/register/`, {
+      const response = await fetch(`${BASE_URL}account/user/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,6 +48,7 @@ const Register = () => {
       });
 
       const data = await response.json();
+      console.log(data,'this is the dataaaaaaaaaaaaaa')
 
       if (!response.ok) {
         throw new Error(data.email || data.phone || data.message || 'Registration failed');
@@ -50,6 +56,7 @@ const Register = () => {
 
       alert('Registration successful. Please check your email for OTP.');
       const userId = data?.id || data?.user_id;
+      console.log(userId,'this is the useris of user')
       navigate(userId ? `/otp/${userId}` : '/otp');
     } catch (err) {
       setErrors({ server: err.message });
@@ -143,12 +150,20 @@ const Register = () => {
             ) : 'Register'}
           </button>
         </form>
+        <button
+          onClick={handleLogout}
+          className="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-semibold transition"
+        >
+          Logout
+        </button>
 
         <p className="mt-6 text-sm text-gray-600 text-center">
           Already have an account?{' '}
           <a href="/login" className="text-blue-600 hover:underline">
             Login here
           </a>
+
+         
         </p>
       </div>
     </div>

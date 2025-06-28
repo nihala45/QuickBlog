@@ -6,6 +6,8 @@ import Home from "./pages/User/Home";
 import Register from "./pages/User/Register";
 import OtpVerify from "./pages/User/OtpVerify";
 import Login from "./pages/User/Login"
+import Profile from "./components/User/Profile";
+import AdminLogin from "./components/Admin/AdminLogin";
 function App() {
   return (
     <div>
@@ -14,7 +16,10 @@ function App() {
         <Route path="/blog/:id" element={<Blog/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
-        <Route path="/otp" element={<OtpVerify/>}/>
+        <Route path="/otp/:id" element={<OtpVerify />} />
+        <Route path="/profile" element={<Profile/>}/>
+        <Route path="/adminlogin" element={<AdminLogin/>}/>
+
 
 
 

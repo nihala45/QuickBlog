@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from account.models import User
+from account.models import Users
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Users
         fields = '__all__'
         extra_kwargs = {
             'password': {'write_only': True}
@@ -10,5 +10,5 @@ class UserSerializer(serializers.ModelSerializer):
 
     
     def create(self, validate_data):
-        return User.objects.create_user(**validate_data)
+        return Users.objects.create_user(**validate_data)
     

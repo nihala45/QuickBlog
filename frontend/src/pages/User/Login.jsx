@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import api from '../../api/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,26 +22,29 @@ const Login = () => {
     }
 
     setLoading(true);
+
     try {
-      const res = await fetch('http://127.0.0.1:8000/blog/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const res = await api.post('account/user/login/', {
+        email,
+        password,
       });
 
-      const data = await res.json();
+      const data = res.data;
+      console.log(data,'this is the data ')
 
-      if (!res.ok) throw new Error(data.detail || 'Invalid credentials');
-
-      localStorage.setItem('access_token', data.access);
-      localStorage.setItem('refresh_token', data.refresh);
-      localStorage.setItem('user', JSON.stringify(data.user)); // assuming backend returns a `user` object
+      
+      login(data);
 
       alert('Login successful!');
-      navigate('/dashboard'); // adjust route based on your app
+      navigate('/');
+
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'Something went wrong');
+      setError(
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        'Something went wrong. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -47,12 +54,18 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-r from-white to-blue-50 flex items-center justify-center px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
         <div className="mb-6 text-center">
-          <img src="/favicon.svg" alt="QuickBlog" className="w-10 h-10 mx-auto mb-2" />
+          <img
+            src="/favicon.svg"
+            alt="QuickBlog"
+            className="w-10 h-10 mx-auto mb-2"
+          />
           <h1 className="text-3xl font-bold text-blue-700">QuickBlog</h1>
           <p className="text-gray-500">Login to continue</p>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -81,10 +94,10 @@ const Login = () => {
         </form>
 
         <p className="mt-6 text-sm text-gray-600 text-center">
-          Don't have an account?{' '}
-          <a href="/register" className="text-blue-600 hover:underline">
+          Don&apos;t have an account?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline">
             Register here
-          </a>
+          </Link>
         </p>
       </div>
     </div>

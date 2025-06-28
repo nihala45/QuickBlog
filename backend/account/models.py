@@ -3,28 +3,39 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, username, phone=None, password=None):
+    def create_user(self, email, username, phone=None, password=None, email_otp=None, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address")
         if not username:
             raise ValueError("Users must have a username")
 
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, phone=phone)
+        user = self.model(
+            email=email,
+            username=username,
+            phone=phone,
+            email_otp=email_otp,
+            **extra_fields
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, phone=None, password=None):
-        user = self.create_user(email=email, username=username, phone=phone, password=password)
-        user.is_superuser = True
-        user.is_staff = True
-        user.save(using=self._db)
+    def create_superuser(self, email, username, phone=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_staff', True)
+
+        user = self.create_user(
+            email=email,
+            username=username,
+            phone=phone,
+            password=password,
+            **extra_fields
+        )
         return user
 
 
-
-class User(AbstractBaseUser, PermissionsMixin):
+class Users(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=100, unique=True)
     username = models.CharField(max_length=50, unique=True)
     phone = models.CharField(max_length=15, unique=True, null=True, blank=True)
