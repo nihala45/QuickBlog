@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
 import { blog_data, assets, comments_data } from '../../assets/assets';
 import Navbar from '../../components/User/Navbar';
 import Moment from 'moment';

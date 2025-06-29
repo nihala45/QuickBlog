@@ -6,6 +6,7 @@ import { AuthContext } from '../../context/AuthContext';
 const OtpVerify = () => {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -14,39 +15,48 @@ const OtpVerify = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
 
-    if (otp) {
-      try {
-        const response = await api.post(`/account/user/verify_otp/${id}/`, {
-          email_otp: otp,
-        });
+    // Simple OTP validation (only digits, 6 digits)
+    if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+      setError('Please enter a valid 6-digit numeric OTP.');
+      return;
+    }
 
-        
+    setLoading(true);
+    setError(null);
 
-        if (response.status === 200) {
-          login(response.data);
- 
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('OTP verification failed:', error);
-        setError('Invalid OTP. Please try again.');
+    try {
+      const response = await api.post(`/account/user/verify_otp/${id}/`, {
+        email_otp: otp,
+      });
+
+      if (response.status === 200) {
+        console.log(response.data, 'this is the response data');
+        login(response.data);
+        navigate('/');
       }
-    } else {
-      setError('Please enter a 6-digit OTP.');
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      setError(
+        error?.response?.data?.error ||
+        error?.response?.data?.detail ||
+        'Invalid OTP. Please try again.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-100 to-blue-50 px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-100 to-blue-50 px-4 py-8">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-sm sm:max-w-md md:max-w-lg">
         <div className="text-center mb-6">
           <img
-            src="/favicon.ico"
+            src="/favicon.svg"
             alt="QuickBlog"
-            className="w-10 h-10 mx-auto mb-2"
+            className="w-12 h-12 mx-auto mb-2"
           />
-          <h1 className="text-2xl font-bold text-blue-700">Verify OTP</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl md:text-3xl font-bold text-blue-700">Verify OTP</h1>
+          <p className="text-gray-600 text-sm md:text-base">
             Enter the 6-digit code sent to your email
           </p>
         </div>
@@ -62,14 +72,43 @@ const OtpVerify = () => {
             placeholder="Enter OTP"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={otp}
-            onChange={(e) => setOtp(e.target.value)}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
           />
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
+            disabled={loading}
+            className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition ${
+              loading ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
-            Verify OTP
+            {loading ? (
+              <span className="flex justify-center items-center">
+                <svg
+                  className="animate-spin h-4 w-4 md:h-5 md:w-5 text-white mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                Verifying...
+              </span>
+            ) : (
+              'Verify OTP'
+            )}
           </button>
         </form>
 

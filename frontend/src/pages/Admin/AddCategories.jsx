@@ -11,10 +11,12 @@ const Categories = () => {
   const [categoryName, setCategoryName] = useState('');
   const [categoryDescription, setCategoryDescription] = useState('');
 
+  // Fetch categories
   const fetchCategories = async () => {
     try {
       const response = await api.get('/adminside/categories/');
       setCategories(response.data);
+      console.log("Fetched categories:", response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -24,7 +26,7 @@ const Categories = () => {
     fetchCategories();
   }, []);
 
-  // OPEN MODAL FOR ADD
+  // Open modal for adding
   const openAddModal = () => {
     setIsEditing(false);
     setCategoryId(null);
@@ -33,7 +35,7 @@ const Categories = () => {
     setModalOpen(true);
   };
 
-  // OPEN MODAL FOR EDIT
+  // Open modal for editing
   const openEditModal = (category) => {
     setIsEditing(true);
     setCategoryId(category.id);
@@ -42,7 +44,7 @@ const Categories = () => {
     setModalOpen(true);
   };
 
-  // HANDLE SAVE (ADD OR EDIT)
+  // Save (create or edit)
   const handleSave = async () => {
     try {
       if (isEditing) {
@@ -50,11 +52,13 @@ const Categories = () => {
           name: categoryName,
           description: categoryDescription,
         });
+        console.log("Category updated:", categoryName);
       } else {
         await api.post('/adminside/categories/', {
           name: categoryName,
           description: categoryDescription,
         });
+        console.log("New category created:", categoryName);
       }
       setModalOpen(false);
       fetchCategories();
@@ -63,10 +67,11 @@ const Categories = () => {
     }
   };
 
-  // DELETE
+  // Delete category
   const handleDeleteCategory = async (id) => {
     try {
       await api.delete(`/adminside/categories/${id}/`);
+      console.log("Category deleted:", id);
       fetchCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
@@ -122,7 +127,7 @@ const Categories = () => {
         </div>
       )}
 
-      {/* List categories */}
+      {/* Categories list */}
       <table className="min-w-full border border-gray-300 text-sm">
         <thead className="bg-gray-100">
           <tr>
@@ -133,32 +138,34 @@ const Categories = () => {
           </tr>
         </thead>
         <tbody>
-          {categories.map((cat) => (
-            <tr key={cat.id} className="border-t">
-              <td className="px-4 py-2 border">{cat.id}</td>
-              <td className="px-4 py-2 border">{cat.name}</td>
-              <td className="px-4 py-2 border">
-                {cat.description || '-'}
-              </td>
-              <td className="px-4 py-2 border flex gap-2">
-                <button
-                  onClick={() => openEditModal(cat)}
-                  className="px-2 py-1 bg-yellow-500 text-white rounded"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteCategory(cat.id)}
-                  className="px-2 py-1 bg-red-600 text-white rounded"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-          {categories.length === 0 && (
+          {categories.length > 0 ? (
+            categories.map((cat) => (
+              <tr key={cat.id} className="border-t">
+                <td className="px-4 py-2 border">{cat.id}</td>
+                <td className="px-4 py-2 border">{cat.name}</td>
+                <td className="px-4 py-2 border">{cat.description || '-'}</td>
+                <td className="px-4 py-2 border flex gap-2">
+                  <button
+                    onClick={() => openEditModal(cat)}
+                    className="px-2 py-1 bg-yellow-500 text-white rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCategory(cat.id)}
+                    className="px-2 py-1 bg-red-600 text-white rounded"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
             <tr>
-              <td colSpan="4" className="px-4 py-6 text-center text-gray-500">
+              <td
+                colSpan="4"
+                className="px-4 py-6 text-center text-gray-500"
+              >
                 No categories found.
               </td>
             </tr>

@@ -19,9 +19,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem(ACCESS_TOKEN, userData.access || '');
     localStorage.setItem(REFRESH_TOKEN, userData.refresh || '');
     localStorage.setItem('user', JSON.stringify(userData));
-
+    
     setUser(userData);
     setIsAuthenticated(true);
+    console.log('User logged in →', userData);
   };
 
   const logout = () => {

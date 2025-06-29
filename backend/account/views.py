@@ -1,62 +1,52 @@
-from django.shortcuts import render
-from rest_framework import generics, permissions, status, viewsets, serializers
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import api_view, action
 from django.contrib.auth import authenticate
-from .models import Users
-from .serializers import UserSerializer
-from rest_framework.permissions import IsAdminUser
-from django.contrib.auth.hashers import make_password
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import AllowAny
-import pyotp
 from django.core.mail import send_mail
 from django.conf import settings
-from django.core.cache import cache
-
+import pyotp
+from .models import Users
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from .serializers import UserSerializer
 
 
 class UserRegisterView(APIView):
-    permission_classes = []
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         print("REQUEST DATA →", request.data)
 
-        # Extract the fields from the request directly
+        
         email = request.data.get("email", "").strip().lower()
         username = request.data.get("username", "").strip()
         phone = request.data.get("phone", "").strip()
         password = request.data.get("password")
 
-        # Check if a verified user already exists with this email
         if Users.objects.filter(email=email, is_email_verified=True).exists():
             return Response(
                 {"email": "This email is already verified and registered."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check if the phone number exists
+       
         if Users.objects.filter(phone=phone).exists():
             return Response(
                 {"phone": "This phone number is already taken."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check for unverified user with this email
+      
         existing_unverified = Users.objects.filter(email=email, is_email_verified=False).first()
 
-        # Generate OTP
+       
         otp_secret = pyotp.random_base32()
-        totp = pyotp.TOTP(otp_secret, interval=300)  # 5 minutes
+        totp = pyotp.TOTP(otp_secret, interval=300)  
         otp = totp.now()
         print("Generated OTP →", otp)
 
         if existing_unverified:
-            # Update the unverified user instead of creating new
+           
             existing_unverified.username = username
             existing_unverified.phone = phone
             existing_unverified.set_password(password)
@@ -65,7 +55,7 @@ class UserRegisterView(APIView):
 
             user = existing_unverified
         else:
-            # Create new user manually
+     
             user = Users(
                 email=email,
                 username=username,
@@ -75,7 +65,7 @@ class UserRegisterView(APIView):
             user.set_password(password)
             user.save()
 
-        # Send OTP email
+    
         try:
             send_mail(
                 subject='Email Verification OTP',
@@ -98,8 +88,7 @@ class UserRegisterView(APIView):
         
         
 class VerifyOTPView(APIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, pk):
         otp = request.data.get('email_otp')
@@ -161,9 +150,19 @@ class LoginView(APIView):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
                 'is_superuser': user.is_superuser,
+                'id': user.id,
+                'email': user.email,
             })
 
         return Response({'error': 'Invalid credentials'}, status=400)
+    
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     
 class AdminLoginView(APIView):
@@ -183,3 +182,27 @@ class AdminLoginView(APIView):
             })
         return Response({'detail' : 'Invalid credentials or not an admin '}, status=status.HTTP_401_UNAUTHORIZED)
     
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+
+class UserProfileEditView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+
+       
+        serializer = UserSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

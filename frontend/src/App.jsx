@@ -10,11 +10,11 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ListUsers from "./pages/Admin/ListUsers"
 import Layout from './pages/Admin/Layout'
-import UserLayout from './pages/User/UserLayout'
-import UserDashboard from "./pages/User/UserDashboard";
-import AddBlog from "./pages/User/AddBlog";
-import ListBlog from "./pages/User/ListBlog";
 import AddCategories from './pages/Admin/AddCategories'
+import UserBlogPage from './pages/User/UserBlogPage'
+import AddBlog from './pages/User/AddBlog'
+import BlogDetailPage from './pages/User/BlogDetailPage'
+
 function App() {
   return (
     <div>
@@ -34,12 +34,12 @@ function App() {
           <Route path="list-categories" element={<AddCategories/>} />
 
         </Route>
+        <Route path="userblogpage" element={< UserBlogPage/>} />
+        <Route path="addBlog" element={<AddBlog />} />
+        <Route path="/blogdetailpage/:id" element={<BlogDetailPage/>}/>
 
-        <Route path="/userdashboard" element={<UserLayout />}>
-          <Route index element={<UserDashboard />} />
-          <Route path="add-blog" element={<AddBlog />} />
-          <Route path="list-blog" element={<ListBlog />} />
-        </Route>
+
+        
 
       </Routes>
     </div>

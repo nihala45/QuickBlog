@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 
-const BlogCard = ({ blog, onDelete }) => {
+const UserBlogCard = ({ blog, onDelete }) => {
   const navigate = useNavigate();
 
   const {
@@ -16,7 +16,21 @@ const BlogCard = ({ blog, onDelete }) => {
     author,
   } = blog;
 
-  
+  const handleDelete = async (e) => {
+    e.stopPropagation(); 
+    if (!window.confirm('Are you sure you want to delete this blog?')) {
+      return;
+    }
+    try {
+      await api.delete(`/blog/blogs/${id}/`);
+      if (onDelete) {
+        onDelete(id);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to delete blog. Please try again.');
+    }
+  };
 
   return (
     <div
@@ -69,10 +83,15 @@ const BlogCard = ({ blog, onDelete }) => {
           </div>
         </div>
 
-       
+        <button
+          onClick={handleDelete}
+          className="mt-4 w-full py-2 text-center text-sm rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition duration-200"
+        >
+          Delete Blog
+        </button>
       </div>
     </div>
   );
 };
 
-export default BlogCard;
+export default UserBlogCard;
