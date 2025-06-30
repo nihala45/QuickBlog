@@ -15,7 +15,6 @@ const OtpVerify = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
 
-    // Simple OTP validation (only digits, 6 digits)
     if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
       setError('Please enter a valid 6-digit numeric OTP.');
       return;
@@ -32,6 +31,7 @@ const OtpVerify = () => {
       if (response.status === 200) {
         console.log(response.data, 'this is the response data');
         login(response.data);
+        alert(response.data.message)
         navigate('/');
       }
     } catch (error) {

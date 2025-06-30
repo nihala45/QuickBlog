@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/api';
-import { assets, comments_data } from '../../assets/assets';
+import { assets } from '../../assets/assets';
 import Navbar from '../../components/User/Navbar';
 import Footer from '../../components/User/Footer';
 import Loader from '../../components/User/Loader';
 import Moment from 'moment';
+import {
+  HeartIcon as HeartOutline,
+} from '@heroicons/react/24/outline';
+import {
+  HeartIcon as HeartSolid,
+} from '@heroicons/react/24/solid';
 
 const BlogDetailPage = () => {
   const { id } = useParams();
@@ -13,22 +19,36 @@ const BlogDetailPage = () => {
 
   const [data, setData] = useState(null);
   const [comments, setComments] = useState([]);
-  const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [loadingPublish, setLoadingPublish] = useState(false);
   const [showFullContent, setShowFullContent] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   const user = JSON.parse(localStorage.getItem('user'));
 
+  const isAdmin = user?.is_superuser;
   const isAuthor = data?.author?.email === user?.email;
 
   const fetchBlogData = async () => {
     try {
       const res = await api.get(`/blog/blogs/${id}/`);
       setData(res.data);
+      setLikesCount(res.data.likes_count || 0);
+      setLiked(res.data.is_liked || false);
     } catch (error) {
       console.error(error);
       alert('Failed to load blog.');
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await api.get(`/blog/blogs/${id}/comments/`);
+      setComments(res.data);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to load comments.');
     }
   };
 
@@ -36,7 +56,7 @@ const BlogDetailPage = () => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
     try {
       await api.delete(`/blog/blogs/${id}/`);
-      navigate('/user/blogs');
+      navigate('/blogs');
     } catch (error) {
       console.error(error);
       alert('Failed to delete blog.');
@@ -57,26 +77,42 @@ const BlogDetailPage = () => {
     }
   };
 
-  const fetchComments = async () => {
-    setComments(comments_data);
+  const toggleLike = async () => {
+    try {
+      const res = await api.post(`/blog/blogs/${id}/like/`);
+      setLiked(res.data.liked);
+      setLikesCount(res.data.likes_count);
+    } catch (error) {
+      console.error(error);
+      alert('Login required to like posts.');
+    }
   };
 
-  const addComment = (e) => {
-    e.preventDefault();
-    const newComment = {
-      name,
-      content,
-      createdAt: new Date(),
-    };
-    setComments((prev) => [...prev, newComment]);
-    setName('');
+ const addComment = async (e) => {
+  e.preventDefault();
+  try {
+    await api.post(`/blog/blogs/${id}/comments/`, {
+      blog: id,
+      text: content,
+    });
     setContent('');
-  };
+    fetchComments();
+  } catch (error) {
+    console.error(error);
+    alert('Failed to add comment.');
+  }
+};
+
 
   const stripHtmlTags = (html) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     return tempDiv.textContent || tempDiv.innerText || '';
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copied to clipboard!');
   };
 
   useEffect(() => {
@@ -120,9 +156,9 @@ const BlogDetailPage = () => {
             {data.author?.username || 'Unknown Author'}
           </p>
 
-          {isAuthor && (
+          {(isAuthor || isAdmin) && (
             <div className="mt-4 flex flex-wrap justify-center gap-3">
-              {data.status === 'draft' && (
+              {data.status === 'draft' && isAuthor && (
                 <button
                   onClick={handlePublish}
                   disabled={loadingPublish}
@@ -131,12 +167,16 @@ const BlogDetailPage = () => {
                   {loadingPublish ? 'Publishing...' : 'Publish Blog'}
                 </button>
               )}
-              <button
-                onClick={() => navigate(`/blog/edit/${id}`)}
-                className="px-4 py-2 text-xs sm:text-sm rounded border border-primary text-primary hover:bg-primary hover:text-white transition"
-              >
-                Edit Blog
-              </button>
+
+              {isAuthor && (
+                <button
+                  onClick={() => navigate(`/blog/edit/${id}`)}
+                  className="px-4 py-2 text-xs sm:text-sm rounded border border-primary text-primary hover:bg-primary hover:text-white transition"
+                >
+                  Edit Blog
+                </button>
+              )}
+
               <button
                 onClick={handleDelete}
                 className="px-4 py-2 text-xs sm:text-sm rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
@@ -189,15 +229,67 @@ const BlogDetailPage = () => {
           )}
         </div>
 
+        {/* LIKE + SHARE */}
+        <div className="mt-10 flex items-center justify-center gap-6">
+          <button
+            onClick={toggleLike}
+            className="flex items-center gap-2 text-red-600 hover:scale-110 transition"
+          >
+            {liked ? (
+              <HeartSolid className="w-7 h-7" />
+            ) : (
+              <HeartOutline className="w-7 h-7" />
+            )}
+            <span className="text-base font-medium">{likesCount}</span>
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:scale-105 transition"
+          >
+            Share
+          </button>
+        </div>
+
+        {/* SOCIAL MEDIA ICONS */}
+        <div className="my-8 max-w-3xl mx-auto">
+          <p className="font-semibold mb-4 text-lg">
+            Share this article on social media
+          </p>
+          <div className="flex flex-wrap gap-5">
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={assets.facebook_icon} width={40} alt="Facebook" />
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={assets.twitter_icon} width={40} alt="Twitter" />
+            </a>
+            <a
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={assets.googleplus_icon} width={40} alt="LinkedIn" />
+            </a>
+          </div>
+        </div>
+
         {/* COMMENTS SECTION */}
         <div className="mt-14 mb-10 max-w-3xl mx-auto">
           <p className="font-semibold mb-4 text-lg">
             Comments ({comments.length})
           </p>
           <div className="flex flex-col gap-6">
-            {comments.map((item, index) => (
+            {comments.map((item) => (
               <div
-                key={index}
+                key={item.id}
                 className="relative bg-white shadow border border-gray-200 p-4 rounded text-gray-700 w-full"
               >
                 <div className="flex items-center gap-3 mb-2">
@@ -207,14 +299,12 @@ const BlogDetailPage = () => {
                     className="w-8 h-8 rounded-full"
                   />
                   <p className="font-semibold text-base break-words">
-                    {item.name}
+                    {item.user || 'Anonymous'}
                   </p>
                 </div>
-                <p className="text-sm ml-11 break-words">
-                  {item.content}
-                </p>
+                <p className="text-sm ml-11 break-words">{item.text}</p>
                 <div className="absolute right-4 bottom-3 text-xs text-gray-400">
-                  {Moment(item.createdAt).fromNow()}
+                  {Moment(item.created_at).fromNow()}
                 </div>
               </div>
             ))}
@@ -225,14 +315,6 @@ const BlogDetailPage = () => {
         <div className="max-w-3xl mx-auto mt-12">
           <p className="font-semibold mb-4 text-lg">Add Your Comment</p>
           <form onSubmit={addComment} className="flex flex-col gap-4 max-w-xl">
-            <input
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              type="text"
-              placeholder="Your Name"
-              required
-              className="w-full p-3 border border-gray-300 rounded-md outline-none text-sm"
-            />
             <textarea
               onChange={(e) => setContent(e.target.value)}
               value={content}
@@ -247,18 +329,6 @@ const BlogDetailPage = () => {
               Submit
             </button>
           </form>
-        </div>
-
-        {/* SOCIAL MEDIA ICONS */}
-        <div className="my-24 max-w-3xl mx-auto">
-          <p className="font-semibold mb-4 text-lg">
-            Share this article on social media
-          </p>
-          <div className="flex flex-wrap gap-5">
-            <img src={assets.facebook_icon} width={40} alt="Facebook" />
-            <img src={assets.twitter_icon} width={40} alt="Twitter" />
-            <img src={assets.googleplus_icon} width={40} alt="Google Plus" />
-          </div>
         </div>
       </main>
 

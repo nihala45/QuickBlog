@@ -1,32 +1,29 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../../api/api';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
 
 const BlogCard = ({ blog, onDelete }) => {
   const navigate = useNavigate();
 
-  const {
-    id,
-    title,
-    content,
-    category,
-    image,
-    status,
-    timestamp,
-    author,
-  } = blog;
-
-  
+  const { id, title, content, category, image, status, timestamp, author } =
+    blog;
 
   return (
     <div
-      onClick={() => navigate(`/blog-detail/${id}`)}
+      onClick={() => {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          navigate(`/blog-detail/${id}`);
+        } else {
+          navigate("/login");
+        }
+      }}
       className="flex flex-col h-full rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer bg-white"
     >
       {image && (
         <img
           src={image}
-          alt={title || 'Blog image'}
+          alt={title || "Blog image"}
           className="w-full object-cover aspect-video"
         />
       )}
@@ -47,18 +44,14 @@ const BlogCard = ({ blog, onDelete }) => {
             className="mb-3 text-sm text-gray-700 break-words"
             dangerouslySetInnerHTML={{
               __html:
-                content?.length > 80
-                  ? content.slice(0, 80) + '...'
-                  : content,
+                content?.length > 80 ? content.slice(0, 80) + "..." : content,
             }}
           ></p>
 
           <div className="text-xs text-gray-500 space-y-1">
-            
-            
             <div>
-              <strong>Date:</strong>{' '}
-              {timestamp ? new Date(timestamp).toLocaleDateString() : ''}
+              <strong>Date:</strong>{" "}
+              {timestamp ? new Date(timestamp).toLocaleDateString() : ""}
             </div>
             {author?.username && (
               <div>
@@ -67,8 +60,6 @@ const BlogCard = ({ blog, onDelete }) => {
             )}
           </div>
         </div>
-
-       
       </div>
     </div>
   );

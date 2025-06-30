@@ -11,6 +11,10 @@ from rest_framework.decorators import action
 from .serializers import CategorySerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from blog.models import BlogPost
+from blog.serializers import BlogPostSerializer
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 class AdminLoginView(APIView):
     def post(self,request):
@@ -121,3 +125,30 @@ class BlogCategoryViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response({"message": "Category deleted."}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class AdminBlogPostViewSet(viewsets.ModelViewSet):
+    queryset = BlogPost.objects.all().order_by("-timestamp")
+    serializer_class = BlogPostSerializer
+    permission_classes = [permissions.IsAdminUser]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['title', 'content']
+    filterset_fields = ['category']
+    def perform_create(self, serializer):
+        # Always save admin user as the author
+        serializer.save(author=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # Admin can only edit their own blog post content
+        if instance.author != request.user:
+            return Response(
+                {"detail": "Admins can only edit their own blog posts."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        # Admin can delete any blog post
+        return super().destroy(request, *args, **kwargs)

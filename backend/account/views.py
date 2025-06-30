@@ -9,6 +9,8 @@ import pyotp
 from .models import Users
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer
+import random
+from django.contrib.auth.hashers import make_password
 
 
 class UserRegisterView(APIView):
@@ -17,11 +19,16 @@ class UserRegisterView(APIView):
     def post(self, request):
         print("REQUEST DATA →", request.data)
 
-        
         email = request.data.get("email", "").strip().lower()
         username = request.data.get("username", "").strip()
         phone = request.data.get("phone", "").strip()
         password = request.data.get("password")
+
+        if not email or not username or not phone or not password:
+            return Response(
+                {"msg": "All fields are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if Users.objects.filter(email=email, is_email_verified=True).exists():
             return Response(
@@ -29,43 +36,36 @@ class UserRegisterView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-       
         if Users.objects.filter(phone=phone).exists():
             return Response(
                 {"phone": "This phone number is already taken."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-      
         existing_unverified = Users.objects.filter(email=email, is_email_verified=False).first()
 
-       
         otp_secret = pyotp.random_base32()
-        totp = pyotp.TOTP(otp_secret, interval=300)  
+        totp = pyotp.TOTP(otp_secret, interval=300)  # OTP valid for 5 minutes
         otp = totp.now()
         print("Generated OTP →", otp)
 
         if existing_unverified:
-           
             existing_unverified.username = username
             existing_unverified.phone = phone
             existing_unverified.set_password(password)
             existing_unverified.email_otp = otp
             existing_unverified.save()
-
             user = existing_unverified
         else:
-     
             user = Users(
                 email=email,
                 username=username,
                 phone=phone,
-                email_otp=otp
+                email_otp=otp,
             )
             user.set_password(password)
             user.save()
 
-    
         try:
             send_mail(
                 subject='Email Verification OTP',
@@ -81,8 +81,10 @@ class UserRegisterView(APIView):
             )
 
         return Response(
-            {"msg": "Registration successful. OTP sent to your email.",
-             "id": user.id},
+            {
+                "msg": "Registration successful. OTP sent to your email.",
+                "id": user.id
+            },
             status=status.HTTP_201_CREATED
         )
         
@@ -155,6 +157,96 @@ class LoginView(APIView):
             })
 
         return Response({'error': 'Invalid credentials'}, status=400)
+    
+    
+class ForgotPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+
+        try:
+            user = Users.objects.get(email=email, is_email_verified=True)
+
+            # Generate a 6-digit numeric OTP
+            otp = str(random.randint(100000, 999999))
+            print("Generated OTP Forget →", otp)
+
+            # Save it to the user model
+            user.email_otp = otp
+            user.save()
+
+            send_mail(
+                subject='Password Reset OTP',
+                message=f'Hi {user.username},\n\nYour OTP for password reset is: {otp}\nIt is valid for 5 minutes.',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return Response(
+                {
+                    "message": "OTP sent to your email.",
+                    "id": user.id,
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except Users.DoesNotExist:
+            return Response(
+                {"error": "No account found with this email."},
+                status=status.HTTP_404_NOT_FOUND
+            )    
+            
+class VerifyForgotPasswordOTPView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, pk):
+        otp = request.data.get('email_otp')
+
+        try:
+            user = Users.objects.get(id=pk)
+
+            if user.email_otp == otp:
+                user.email_otp = None  
+                user.save()
+
+                return Response({"message": "OTP verified."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid OTP."}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Users.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, pk):
+        password = request.data.get('password')
+
+        if not password or len(password) < 6:
+            return Response(
+                {"error": "Password must be at least 6 characters long."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            user = Users.objects.get(id=pk)
+            user.password = make_password(password)
+            user.save()
+
+            return Response(
+                {"message": "Password has been reset successfully."},
+                status=status.HTTP_200_OK
+            )
+
+        except Users.DoesNotExist:
+            return Response(
+                {"error": "User not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+       
     
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]

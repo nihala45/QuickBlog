@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import BlogPost
+from .models import BlogPost, Comment, BlogLike
 from adminside.models import BlogCategory
 from adminside.serializers import CategorySerializer
+
 class BlogPostSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     category = CategorySerializer(read_only=True)
@@ -10,6 +11,8 @@ class BlogPostSerializer(serializers.ModelSerializer):
         source='category',
         write_only=True
     )
+    likes_count = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = BlogPost
@@ -23,6 +26,8 @@ class BlogPostSerializer(serializers.ModelSerializer):
             'category_id',
             'timestamp',
             'status',
+            'likes_count',
+            'is_liked',
         ]
 
     def get_author(self, obj):
@@ -39,3 +44,28 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+    def get_likes_count(self, obj):
+        return BlogLike.objects.filter(blog=obj).count()
+
+    def get_is_liked(self, obj):
+        user = self.context['request'].user
+        if user and user.is_authenticated:
+            return BlogLike.objects.filter(blog=obj, user=user).exists()
+        return False
+
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True) 
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'blog', 'user', 'text', 'created_at']
+        read_only_fields = ['id', 'user', 'created_at']
+        
+        
+class BlogLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogLike
+        fields = ['id', 'blog', 'user']

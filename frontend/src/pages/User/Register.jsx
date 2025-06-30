@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { BASE_URL } from '../../utils/token';
 
 const Register = () => {
@@ -74,11 +74,13 @@ const Register = () => {
         );
       }
 
-      alert('Registration successful. Please check your email for OTP.');
+      alert(data.msg);
       const userId = data?.id || data?.user_id;
       navigate(userId ? `/otp/${userId}` : '/otp');
     } catch (err) {
       setErrors({ server: err.message });
+      
+     
     } finally {
       setLoading(false);
     }
@@ -171,7 +173,10 @@ const Register = () => {
               placeholder="Confirm Password"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
             />
+
+            
           </div>
+          
 
           <button
             type="submit"
@@ -208,7 +213,14 @@ const Register = () => {
               'Register'
             )}
           </button>
+          
         </form>
+         <p className="mt-6 text-sm text-center text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline font-medium">
+            Login here
+          </Link>
+        </p>
       </div>
     </div>
   );

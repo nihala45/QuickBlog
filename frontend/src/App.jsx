@@ -16,6 +16,9 @@ import AddBlog from './pages/User/AddBlog'
 import BlogDetailPage from './pages/User/BlogDetailPage'
 import EditBlogPage from "./pages/User/EditBlogPage";
 import UserManagement from "./pages/Admin/UserManagement";
+import ForgetPassword from "./pages/User/ForgetPassword";
+import VerifyForgotPasswordOtp from "./pages/User/VerifyForgotPasswordOtp";
+import ResetPassword from "./pages/User/ResetPassword";
 
 function App() {
   return (
@@ -26,6 +29,12 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/otp/:id" element={<OtpVerify />} />
+        <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/forget-otp/:id" element={<VerifyForgotPasswordOtp />} />
+        <Route path="/reset-password/:id" element={<ResetPassword />} />
+
+
+
         
         <Route path="/adminlogin" element={<AdminLogin/>}/>
         <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
