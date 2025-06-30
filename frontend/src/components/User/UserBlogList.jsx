@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import UserBlogCard from '../../components/User/UserBlogCard';
 import api from '../../api/api';
 
@@ -7,11 +8,13 @@ const UserBlogList = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     const fetchBlogs = async () => {
       setLoading(true);
       try {
-        const res = await api.get("/blog/blogs/");
+        const res = await api.get("blog/blogs/my-blogs/");
         setBlogs(res.data);
       } catch (error) {
         console.error(error);
@@ -33,9 +36,18 @@ const UserBlogList = () => {
 
   return (
     <div className="py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-        My Blogs
-      </h1>
+      <div className="flex justify-between items-center px-4 sm:px-8 xl:px-40 mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          My Blogs
+        </h1>
+        <button
+  onClick={() => navigate('/add-blog')}
+  className="bg-green-500 text-white text-sm sm:text-base px-4 py-2 rounded hover:bg-green-600 transition"
+>
+   + Add Blog
+</button>
+
+      </div>
 
       {message && (
         <div

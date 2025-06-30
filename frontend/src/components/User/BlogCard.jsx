@@ -20,7 +20,7 @@ const BlogCard = ({ blog, onDelete }) => {
 
   return (
     <div
-      onClick={() => navigate(`/blogdetailpage/${id}`)}
+      onClick={() => navigate(`/blog-detail/${id}`)}
       className="flex flex-col h-full rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer bg-white"
     >
       {image && (
@@ -54,9 +54,8 @@ const BlogCard = ({ blog, onDelete }) => {
           ></p>
 
           <div className="text-xs text-gray-500 space-y-1">
-            <div>
-              <strong>Status:</strong> {status}
-            </div>
+            
+            
             <div>
               <strong>Date:</strong>{' '}
               {timestamp ? new Date(timestamp).toLocaleDateString() : ''}

@@ -23,7 +23,7 @@ const Navbar = () => {
         <div className="hidden md:flex">
           {isAuthenticated ? (
             <button
-              onClick={() => navigate('/userblogpage')}
+              onClick={() => navigate('/user-blog-page')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
             >
               <span>Myblog</span>

@@ -14,6 +14,7 @@ import AddCategories from './pages/Admin/AddCategories'
 import UserBlogPage from './pages/User/UserBlogPage'
 import AddBlog from './pages/User/AddBlog'
 import BlogDetailPage from './pages/User/BlogDetailPage'
+import EditBlogPage from "./pages/User/EditBlogPage";
 
 function App() {
   return (
@@ -34,13 +35,12 @@ function App() {
           <Route path="list-categories" element={<AddCategories/>} />
 
         </Route>
-        <Route path="userblogpage" element={< UserBlogPage/>} />
-        <Route path="addBlog" element={<AddBlog />} />
-        <Route path="/blogdetailpage/:id" element={<BlogDetailPage/>}/>
+       <Route path="/user-blog-page" element={<UserBlogPage />} />
+       <Route path="/add-blog" element={<AddBlog />} />
 
+         <Route path="/blog-detail/:id" element={<BlogDetailPage />} />
 
-        
-
+        <Route path="/blog/edit/:id" element={<EditBlogPage />} />
       </Routes>
     </div>
   );

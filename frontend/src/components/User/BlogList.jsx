@@ -11,7 +11,6 @@ const BlogList = () => {
   const [menu, setMenu] = useState('All');
   const [loading, setLoading] = useState(false);
 
-  
   const fetchBlogs = async (categoryId = null) => {
     setLoading(true);
     let url = '/blog/public/blogs/';
@@ -29,10 +28,9 @@ const BlogList = () => {
     }
   };
 
-  // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await api.get('/blog/user/categories/');
+      const res = await api.get('/blog/blog/categories/');
       setCategories(res.data);
     } catch (error) {
       console.error(error);
@@ -51,7 +49,7 @@ const BlogList = () => {
 
   return (
     <div className="py-10">
-      {/* Category Filter Bar */}
+      {/* Category filter */}
       <div className="w-full overflow-x-auto">
         <div className="flex justify-start sm:justify-center gap-4 sm:gap-8 px-4 sm:px-0 py-4">
           <div className="relative">
@@ -96,16 +94,14 @@ const BlogList = () => {
         </div>
       </div>
 
-      {/* Blog Cards Grid */}
+      {/* Blog grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-24 px-4 sm:px-8 xl:px-40">
         {loading ? (
           <p className="text-center w-full col-span-full text-gray-500">
             Loading blogs...
           </p>
         ) : blogs.length > 0 ? (
-          blogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
-          ))
+          blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />)
         ) : (
           <p className="text-center w-full col-span-full text-gray-500">
             No blogs found.

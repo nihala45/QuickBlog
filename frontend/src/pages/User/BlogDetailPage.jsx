@@ -1,5 +1,3 @@
-// src/pages/User/BlogDetailPage.js
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/api';
@@ -12,11 +10,13 @@ import Moment from 'moment';
 const BlogDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [data, setData] = useState(null);
   const [comments, setComments] = useState([]);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [loadingPublish, setLoadingPublish] = useState(false);
+  const [showFullContent, setShowFullContent] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -24,10 +24,36 @@ const BlogDetailPage = () => {
 
   const fetchBlogData = async () => {
     try {
-      const res = await api.get(`/blog/public/blogs/${id}/`);
+      const res = await api.get(`/blog/blogs/${id}/`);
       setData(res.data);
     } catch (error) {
       console.error(error);
+      alert('Failed to load blog.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this blog?')) return;
+    try {
+      await api.delete(`/blog/blogs/${id}/`);
+      navigate('/user/blogs');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to delete blog.');
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!window.confirm('Are you sure you want to publish this blog?')) return;
+    try {
+      setLoadingPublish(true);
+      await api.patch(`/blog/blogs/${id}/`, { status: 'published' });
+      await fetchBlogData();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to publish blog.');
+    } finally {
+      setLoadingPublish(false);
     }
   };
 
@@ -47,33 +73,10 @@ const BlogDetailPage = () => {
     setContent('');
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this blog?')) return;
-
-    try {
-      await api.delete(`/blog/blogs/${id}/`);
-      navigate('/user/blogs');
-    } catch (error) {
-      console.error(error);
-      alert('Failed to delete blog.');
-    }
-  };
-
-  const handlePublish = async () => {
-    if (!window.confirm('Are you sure you want to publish this blog?')) return;
-
-    try {
-      setLoadingPublish(true);
-      await api.patch(`/blog/blogs/${id}/`, {
-        status: 'published',
-      });
-      await fetchBlogData();
-    } catch (error) {
-      console.error(error);
-      alert('Failed to publish blog.');
-    } finally {
-      setLoadingPublish(false);
-    }
+  const stripHtmlTags = (html) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
   };
 
   useEffect(() => {
@@ -81,7 +84,12 @@ const BlogDetailPage = () => {
     fetchComments();
   }, [id]);
 
-  return data ? (
+  if (!data) return <Loader />;
+
+  const plainTextContent = stripHtmlTags(data.content);
+  const previewText = plainTextContent.slice(0, 500);
+
+  return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
 
@@ -109,7 +117,7 @@ const BlogDetailPage = () => {
           )}
 
           <p className="inline-block py-1 px-4 rounded-full mb-5 border text-xs sm:text-sm border-primary/35 bg-primary/5 font-medium text-primary">
-            {data.author?.username || 'Unknown Author'} · {data.status}
+            {data.author?.username || 'Unknown Author'}
           </p>
 
           {isAuthor && (
@@ -149,12 +157,39 @@ const BlogDetailPage = () => {
           />
         )}
 
-        <div
-          className="rich-text text-gray-800 leading-relaxed max-w-3xl mx-auto text-sm sm:text-base"
-          dangerouslySetInnerHTML={{ __html: data.content }}
-        />
+        {/* CONTENT SECTION */}
+        <div className="rich-text text-gray-800 leading-relaxed max-w-3xl mx-auto text-sm sm:text-base">
+          {showFullContent ? (
+            <>
+              <div dangerouslySetInnerHTML={{ __html: data.content }} />
+              {plainTextContent.length > 500 && (
+                <button
+                  onClick={() => setShowFullContent(false)}
+                  className="mt-4 inline-block text-primary hover:underline text-sm sm:text-base"
+                >
+                  Show Less
+                </button>
+              )}
+            </>
+          ) : (
+            <p>
+              {previewText}
+              {plainTextContent.length > 500 && (
+                <>
+                  ...{' '}
+                  <button
+                    onClick={() => setShowFullContent(true)}
+                    className="inline text-primary hover:underline text-sm sm:text-base"
+                  >
+                    Read More
+                  </button>
+                </>
+              )}
+            </p>
+          )}
+        </div>
 
-        {/* Comments Section */}
+        {/* COMMENTS SECTION */}
         <div className="mt-14 mb-10 max-w-3xl mx-auto">
           <p className="font-semibold mb-4 text-lg">
             Comments ({comments.length})
@@ -171,9 +206,13 @@ const BlogDetailPage = () => {
                     alt=""
                     className="w-8 h-8 rounded-full"
                   />
-                  <p className="font-semibold text-base break-words">{item.name}</p>
+                  <p className="font-semibold text-base break-words">
+                    {item.name}
+                  </p>
                 </div>
-                <p className="text-sm ml-11 break-words">{item.content}</p>
+                <p className="text-sm ml-11 break-words">
+                  {item.content}
+                </p>
                 <div className="absolute right-4 bottom-3 text-xs text-gray-400">
                   {Moment(item.createdAt).fromNow()}
                 </div>
@@ -182,13 +221,10 @@ const BlogDetailPage = () => {
           </div>
         </div>
 
-        {/* Add Comment */}
+        {/* ADD COMMENT FORM */}
         <div className="max-w-3xl mx-auto mt-12">
           <p className="font-semibold mb-4 text-lg">Add Your Comment</p>
-          <form
-            onSubmit={addComment}
-            className="flex flex-col gap-4 max-w-xl"
-          >
+          <form onSubmit={addComment} className="flex flex-col gap-4 max-w-xl">
             <input
               onChange={(e) => setName(e.target.value)}
               value={name}
@@ -213,6 +249,7 @@ const BlogDetailPage = () => {
           </form>
         </div>
 
+        {/* SOCIAL MEDIA ICONS */}
         <div className="my-24 max-w-3xl mx-auto">
           <p className="font-semibold mb-4 text-lg">
             Share this article on social media
@@ -227,8 +264,6 @@ const BlogDetailPage = () => {
 
       <Footer />
     </div>
-  ) : (
-    <Loader />
   );
 };
 
