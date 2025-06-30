@@ -38,7 +38,7 @@ const AdminLogin = () => {
       setError(
         err.response?.data?.detail ||
         err.response?.data?.error ||
-        'Login failed.'
+        'please check email and password.'
       );
     } finally {
       setLoading(false);

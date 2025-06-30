@@ -8,13 +8,14 @@ import OtpVerify from "./pages/User/OtpVerify";
 import Login from "./pages/User/Login"
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import ListUsers from "./pages/Admin/ListUsers"
+import ManageBlog from './pages/Admin/ManageBlog'
 import Layout from './pages/Admin/Layout'
-import AddCategories from './pages/Admin/AddCategories'
+import ManageCategories from "./pages/Admin/ManageCategories";
 import UserBlogPage from './pages/User/UserBlogPage'
 import AddBlog from './pages/User/AddBlog'
 import BlogDetailPage from './pages/User/BlogDetailPage'
 import EditBlogPage from "./pages/User/EditBlogPage";
+import UserManagement from "./pages/Admin/UserManagement";
 
 function App() {
   return (
@@ -31,9 +32,9 @@ function App() {
 
         <Route path="/admin" element={<Layout />}>
           <Route index element={<AdminDashboard />} />
-          <Route path="list-users" element={<ListUsers />} />
-          <Route path="list-categories" element={<AddCategories/>} />
-
+          <Route path="manage-users" element={<UserManagement />} />
+          <Route path="manage-categories" element={<ManageCategories/>} />
+          <Route path="manage-blog" element={<ManageBlog/>} />
         </Route>
        <Route path="/user-blog-page" element={<UserBlogPage />} />
        <Route path="/add-blog" element={<AddBlog />} />

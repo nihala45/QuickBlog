@@ -5,8 +5,10 @@ import { NavLink } from 'react-router-dom'
 const Sidebar = () => {
   const sidebarLinks = [
     { name: 'Dashboard', Path: '/admin', icon: assets.dashboard_icon_1 },
-    { name: 'List Users', Path: '/admin/list-users', icon: assets.dashboard_icon_2 },
-    { name: 'List Categories', Path: '/admin/list-categories', icon: assets.dashboard_icon_2 },
+    { name: 'Manage Users', Path: '/admin/manage-users', icon: assets.dashboard_icon_2 },
+    { name: 'Manage Categories', Path: '/admin/manage-categories', icon: assets.dashboard_icon_2 },
+    { name: 'Manage Blog', Path: '/admin/manage-blog', icon: assets.dashboard_icon_2 },
+
 
   ]
 
