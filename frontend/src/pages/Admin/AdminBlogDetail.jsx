@@ -204,7 +204,6 @@ const BlogDetailPage = () => {
           />
         )}
 
-        {/* CONTENT SECTION */}
         <div className="rich-text text-gray-800 leading-relaxed max-w-3xl mx-auto text-sm sm:text-base">
           {showFullContent ? (
             <>

@@ -30,14 +30,11 @@ class BlogPostViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         title = request.data.get('title', '').strip()
-        # 1) Pre‐check for duplicates (case‑insensitive)
         if BlogPost.objects.filter(title__iexact=title).exists():
             return Response(
                 {"title": ["Title already exists. Please choose another name."]},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        # 2) Fallback catch for race conditions
         try:
             return super().create(request, *args, **kwargs)
         except IntegrityError:

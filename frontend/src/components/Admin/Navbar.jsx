@@ -16,7 +16,6 @@ const AdminNavbar = () => {
     <nav className="bg-gradient-to-r from-gray-50 to-gray-100 shadow-lg border-b border-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center h-auto md:h-16 gap-y-4 py-4 md:py-0">
-          {/* Left: logo */}
           <div className="flex items-center flex-1 justify-center md:justify-start">
             <div
               onClick={() => navigate('/admin-dashboard')}
@@ -30,8 +29,6 @@ const AdminNavbar = () => {
               />
             </div>
           </div>
-
-          {/* Center: title (visible on larger screens) */}
           <div className="hidden md:flex flex-1 justify-center">
             <span
               onClick={() => navigate('/admin-dashboard')}
@@ -42,7 +39,6 @@ const AdminNavbar = () => {
             </span>
           </div>
 
-          {/* Right: user info and login/logout */}
           <div className="flex items-center flex-1 justify-center md:justify-end gap-4">
             {isAuthenticated ? (
               <>

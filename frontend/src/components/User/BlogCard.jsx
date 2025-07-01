@@ -18,10 +18,10 @@ const BlogCard = ({ blog }) => {
   const handleClick = () => {
     const token = localStorage.getItem('access_token');
     if (token) {
-      // User is logged in → go to blog detail
+    
       navigate(`/blog-detail/${id}`);
     } else {
-      // User not logged in → go to login
+     
       navigate('/login');
     }
   };

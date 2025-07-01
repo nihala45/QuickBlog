@@ -2,7 +2,7 @@ import React from 'react'
 import Sidebar from '../../components/Admin/sidebar'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../../components/Admin/Navbar'
-import Footer from '../../components/User/Footer' // ✅ import Footer
+import Footer from '../../components/User/Footer' 
 
 const Layout = () => {
   return (

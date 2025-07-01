@@ -15,10 +15,6 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
     
 
 class IsAuthorOrAdminDeleteOnly(permissions.BasePermission):
-    """
-    Allow authors to edit and delete their own blog posts.
-    Allow admins to delete any blog post, but not edit.
-    """
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True

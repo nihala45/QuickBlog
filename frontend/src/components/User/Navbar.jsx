@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md">
       <div className="mx-4 sm:mx-8 xl:mx-32 flex justify-between items-center py-4">
-        {/* Logo */}
+    
         <img
           onClick={() => navigate('/')}
           src={assets.logo}
@@ -34,7 +34,7 @@ const Navbar = () => {
           className="w-28 sm:w-44 cursor-pointer"
         />
 
-        {/* Desktop Menu */}
+       
         <div className="hidden md:flex gap-4 items-center">
           {isAuthenticated ? (
             <>
@@ -61,7 +61,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Toggle */}
         <button
           className="md:hidden focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -91,7 +90,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-2">
           {isAuthenticated ? (

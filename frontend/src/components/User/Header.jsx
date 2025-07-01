@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets';
 const Header = () => {
   return (
     <div className="relative overflow-hidden">
-      {/* Background Gradient Image */}
+   
       <img
         src={assets.gradientBackground}
         alt=""
@@ -12,13 +12,13 @@ const Header = () => {
       />
 
       <div className="mx-4 sm:mx-8 xl:mx-24 py-16 sm:py-24 text-center">
-        {/* Title */}
+      
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight text-gray-700">
           Your Own <span className="text-primary">blogging</span> <br className="hidden sm:block" />
           platform
         </h1>
 
-        {/* Subtitle */}
+     
         <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-gray-500 text-sm sm:text-base md:text-lg">
           This is your space to think out loud, to share what matters, and to write 
           without filters. Whether it's one word or a thousand, your 

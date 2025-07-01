@@ -12,7 +12,7 @@ const UserBlogList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
-  const pageSize = 10; // must match your backend
+  const pageSize = 10; 
 
   const fetchBlogs = async (page = 1, search = "") => {
     setLoading(true);
@@ -70,7 +70,7 @@ const UserBlogList = () => {
       <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M16.65 10a6.65 6.65 0 11-13.3 0 6.65 6.65 0 0113.3 0z" />
     </svg>
 
-    {/* Text input */}
+    
     <input
       type="text"
       placeholder="Search your blogs..."
@@ -79,7 +79,7 @@ const UserBlogList = () => {
       className="w-full pl-12 pr-36 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
     />
 
-    {/* Floating submit button */}
+    
     <button
       type="submit"
       className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-primary text-white px-5 py-2 rounded-full shadow hover:shadow-md transition"
@@ -113,9 +113,9 @@ const UserBlogList = () => {
             ))}
           </div>
 
-          {/* Prev / Numbered / Next */}
+     
           <div className="flex justify-center items-center space-x-2 mt-8">
-            {/* Prev */}
+           
             <button
               onClick={() => fetchBlogs(currentPage - 1, searchTerm)}
               disabled={currentPage === 1}
@@ -124,7 +124,7 @@ const UserBlogList = () => {
               Prev
             </button>
 
-            {/* Numbered */}
+            
             {Array.from({ length: totalPages }, (_, i) => {
               const page = i + 1;
               return (
@@ -140,7 +140,7 @@ const UserBlogList = () => {
               );
             })}
 
-            {/* Next */}
+          
             <button
               onClick={() => fetchBlogs(currentPage + 1, searchTerm)}
               disabled={currentPage === totalPages}

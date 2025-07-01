@@ -4,7 +4,7 @@ import { assets, footer_data } from '../../assets/assets';
 const Footer = () => {
   return (
     <div className="px-6 md:px-16 lg:px-24 xl:px-32 bg-primary/3">
-      {/* Top section */}
+ 
       <div
         className="
           flex flex-col md:flex-row
@@ -15,7 +15,7 @@ const Footer = () => {
           text-gray-500
         "
       >
-        {/* Left column */}
+     
         <div className="flex-1">
           <img src={assets.logo} alt="QuickBlog Logo" className="w-32 sm:w-44 mb-4" />
           <p className="max-w-md text-sm sm:text-base">
@@ -24,7 +24,7 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Right column: links */}
+        
         <div className="flex flex-wrap justify-between w-full md:w-[45%] gap-8 md:gap-5">
           {footer_data.map((section, index) => (
             <div key={index} className="min-w-[120px]">
@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom copyright */}
+
       <p className="py-4 text-center text-xs sm:text-sm md:text-base text-gray-500/80">
         Copyright © 2025 QuickBlog. All Rights Reserved.
       </p>

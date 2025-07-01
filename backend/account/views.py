@@ -196,6 +196,8 @@ class ForgotPasswordView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )    
             
+            
+            
 class VerifyForgotPasswordOTPView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -215,6 +217,7 @@ class VerifyForgotPasswordOTPView(APIView):
 
         except Users.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        
         
 class ResetPasswordView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -265,9 +268,6 @@ class AdminLoginView(APIView):
     
     
 class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update, or delete the authenticated user's profile.
-    """
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]

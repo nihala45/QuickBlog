@@ -22,8 +22,6 @@ class AdminLoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(email=email,password = password)
-        print(email,password)
-        print(user)
 
         if user is not None and user.is_superuser:
             refresh = RefreshToken.for_user(user)
@@ -82,9 +80,6 @@ class UserViewSet(
             {'status': 'User unblocked successfully.'},
             status=status.HTTP_200_OK
         )
-        
-    
-# blog/views.py
 
 
 
@@ -136,22 +131,17 @@ class AdminBlogPostViewSet(viewsets.ModelViewSet):
     filterset_fields = ['category']
 
     def get_queryset(self):
-        """
-        For listing, return only published blogs.
-        For retrieve/update/delete, allow all blogs.
-        """
         if self.action == 'list':
             return BlogPost.objects.filter(status='published').order_by("-timestamp")
         return BlogPost.objects.all().order_by("-timestamp")
 
     def perform_create(self, serializer):
-        # Always save admin user as the author
         serializer.save(author=self.request.user)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        # Admin can only edit their own blog post content
+       
         if instance.author != request.user:
             return Response(
                 {"detail": "Admins can only edit their own blog posts."},
@@ -160,7 +150,6 @@ class AdminBlogPostViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        # Admin can delete any blog post
         return super().destroy(request, *args, **kwargs)
 
     queryset = BlogPost.objects.all().order_by("-timestamp")
@@ -170,13 +159,12 @@ class AdminBlogPostViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'content']
     filterset_fields = ['category']
     def perform_create(self, serializer):
-        # Always save admin user as the author
         serializer.save(author=self.request.user)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        # Admin can only edit their own blog post content
+      
         if instance.author != request.user:
             return Response(
                 {"detail": "Admins can only edit their own blog posts."},
@@ -185,7 +173,6 @@ class AdminBlogPostViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        # Admin can delete any blog post
         return super().destroy(request, *args, **kwargs)
     
     @action(detail=False, methods=['get'])

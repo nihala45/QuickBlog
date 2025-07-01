@@ -39,7 +39,7 @@ const AdminEditBlog = () => {
       const res = await api.get('/blog/blog/categories/');
       console.log('Fetched Categories:', res.data);
 
-      // ensure we get an array
+   
       const data = Array.isArray(res.data)
         ? res.data
         : res.data.results || [];
@@ -59,7 +59,7 @@ const AdminEditBlog = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    // validate content word count
+   
     const wordCount = content.trim().split(/\s+/).length;
     if (wordCount < 50) {
       alert(`Your blog content has only ${wordCount} words. Please add at least 50 words.`);
