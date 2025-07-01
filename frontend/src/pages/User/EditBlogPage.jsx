@@ -37,9 +37,17 @@ const EditBlogPage = () => {
   const fetchCategories = async () => {
     try {
       const res = await api.get('/blog/blog/categories/');
-      setCategories(res.data);
+      console.log('Fetched Categories:', res.data);
+
+      // ensure we get an array
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.results || [];
+
+      setCategories(data);
     } catch (error) {
       console.error(error);
+      setCategories([]);
     }
   };
 
@@ -51,11 +59,20 @@ const EditBlogPage = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
+    // validate content word count
+    const wordCount = content.trim().split(/\s+/).length;
+    if (wordCount < 50) {
+      alert(`Your blog content has only ${wordCount} words. Please add at least 50 words.`);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
     formData.append('category_id', categoryId);
-    if (image) formData.append('image', image);
+    if (image) {
+      formData.append('image', image);
+    }
 
     try {
       setSaving(true);
@@ -65,10 +82,10 @@ const EditBlogPage = () => {
         },
       });
       alert('Blog updated successfully!');
-      
+      navigate(`/blog-detail/${id}`);
     } catch (error) {
       console.error(error);
-      alert('Failed to update blog.');
+      alert('Failed to update blog. Please check your inputs.');
     } finally {
       setSaving(false);
     }
@@ -110,6 +127,7 @@ const EditBlogPage = () => {
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base outline-none focus:ring focus:ring-primary/30"
+              required
             >
               <option value="">Select category</option>
               {categories.map((cat) => (
@@ -131,6 +149,9 @@ const EditBlogPage = () => {
               onChange={(e) => setContent(e.target.value)}
               required
             ></textarea>
+            <p className="text-xs text-gray-500 mt-1">
+              Minimum 50 words required. Current words: {content.trim().split(/\s+/).length}
+            </p>
           </div>
 
           <div>

@@ -236,107 +236,112 @@ const BlogDetailPage = () => {
           )}
         </div>
 
-        {/* LIKE + SHARE */}
-        <div className="mt-10 flex items-center justify-center gap-6">
-          <button
-            onClick={toggleLike}
-            className="flex items-center gap-2 text-red-600 hover:scale-110 transition"
-          >
-            {liked ? (
-              <HeartSolid className="w-7 h-7" />
-            ) : (
-              <HeartOutline className="w-7 h-7" />
-            )}
-            <span className="text-base font-medium">{likesCount}</span>
-          </button>
-
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:scale-105 transition"
-          >
-            Share
-          </button>
-        </div>
-
-        {/* SOCIAL MEDIA ICONS */}
-        <div className="my-8 max-w-3xl mx-auto">
-          <p className="font-semibold mb-4 text-lg">
-            Share this article on social media
-          </p>
-          <div className="flex flex-wrap gap-5">
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={assets.facebook_icon} width={40} alt="Facebook" />
-            </a>
-            <a
-              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={assets.twitter_icon} width={40} alt="Twitter" />
-            </a>
-            <a
-              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={assets.googleplus_icon} width={40} alt="LinkedIn" />
-            </a>
-          </div>
-        </div>
-
-        {/* COMMENTS SECTION */}
-        <div className="mt-14 mb-10 max-w-3xl mx-auto">
-          <p className="font-semibold mb-4 text-lg">
-            Comments ({comments.length})
-          </p>
-          <div className="flex flex-col gap-6">
-            {comments.map((item) => (
-              <div
-                key={item.id}
-                className="relative bg-white shadow border border-gray-200 p-4 rounded text-gray-700 w-full"
+        {/* CONDITIONAL SECTIONS FOR PUBLISHED BLOGS */}
+        {data.status === 'published' && (
+          <>
+            {/* LIKE + SHARE */}
+            <div className="mt-10 flex items-center justify-center gap-6">
+              <button
+                onClick={toggleLike}
+                className="flex items-center gap-2 text-red-600 hover:scale-110 transition"
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <img
-                    src={assets.user_icon}
-                    alt=""
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <p className="font-semibold text-base break-words">
-                    {item.user || 'Anonymous'}
-                  </p>
-                </div>
-                <p className="text-sm ml-11 break-words">{item.text}</p>
-                <div className="absolute right-4 bottom-3 text-xs text-gray-400">
-                  {Moment(item.created_at).fromNow()}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+                {liked ? (
+                  <HeartSolid className="w-7 h-7" />
+                ) : (
+                  <HeartOutline className="w-7 h-7" />
+                )}
+                <span className="text-base font-medium">{likesCount}</span>
+              </button>
 
-        {/* ADD COMMENT FORM */}
-        <div className="max-w-3xl mx-auto mt-12">
-          <p className="font-semibold mb-4 text-lg">Add Your Comment</p>
-          <form onSubmit={addComment} className="flex flex-col gap-4 max-w-xl">
-            <textarea
-              onChange={(e) => setContent(e.target.value)}
-              value={content}
-              placeholder="Write your comment here..."
-              required
-              className="w-full p-3 border border-gray-300 rounded-md outline-none h-24 resize-none text-sm"
-            />
-            <button
-              type="submit"
-              className="bg-primary text-white rounded-md px-6 py-2 hover:scale-105 transition-transform text-sm"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:scale-105 transition"
+              >
+                Share
+              </button>
+            </div>
+
+            {/* SOCIAL MEDIA ICONS */}
+            <div className="my-8 max-w-3xl mx-auto">
+              <p className="font-semibold mb-4 text-lg">
+                Share this article on social media
+              </p>
+              <div className="flex flex-wrap gap-5">
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={assets.facebook_icon} width={40} alt="Facebook" />
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={assets.twitter_icon} width={40} alt="Twitter" />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src={assets.googleplus_icon} width={40} alt="LinkedIn" />
+                </a>
+              </div>
+            </div>
+
+            {/* COMMENTS SECTION */}
+            <div className="mt-14 mb-10 max-w-3xl mx-auto">
+              <p className="font-semibold mb-4 text-lg">
+                Comments ({comments.length})
+              </p>
+              <div className="flex flex-col gap-6">
+                {comments.map((item) => (
+                  <div
+                    key={item.id}
+                    className="relative bg-white shadow border border-gray-200 p-4 rounded text-gray-700 w-full"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <img
+                        src={assets.user_icon}
+                        alt=""
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <p className="font-semibold text-base break-words">
+                        {item.user || 'Anonymous'}
+                      </p>
+                    </div>
+                    <p className="text-sm ml-11 break-words">{item.text}</p>
+                    <div className="absolute right-4 bottom-3 text-xs text-gray-400">
+                      {Moment(item.created_at).fromNow()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ADD COMMENT FORM */}
+            <div className="max-w-3xl mx-auto mt-12">
+              <p className="font-semibold mb-4 text-lg">Add Your Comment</p>
+              <form onSubmit={addComment} className="flex flex-col gap-4 max-w-xl">
+                <textarea
+                  onChange={(e) => setContent(e.target.value)}
+                  value={content}
+                  placeholder="Write your comment here..."
+                  required
+                  className="w-full p-3 border border-gray-300 rounded-md outline-none h-24 resize-none text-sm"
+                />
+                <button
+                  type="submit"
+                  className="bg-primary text-white rounded-md px-6 py-2 hover:scale-105 transition-transform text-sm"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          </>
+        )}
       </main>
 
       <Footer />

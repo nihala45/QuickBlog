@@ -2,16 +2,31 @@ import React, { useContext, useState } from 'react';
 import { assets } from '../../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const Button = ({ onClick, children }) => (
+    <button
+      onClick={onClick}
+      className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+    >
+      {children}
+    </button>
+  );
 
   return (
     <nav className="bg-white shadow-md">
       <div className="mx-4 sm:mx-8 xl:mx-32 flex justify-between items-center py-4">
-      
+        {/* Logo */}
         <img
           onClick={() => navigate('/')}
           src={assets.logo}
@@ -19,36 +34,34 @@ const Navbar = () => {
           className="w-28 sm:w-44 cursor-pointer"
         />
 
-        <div className="hidden md:flex gap-4">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex gap-4 items-center">
           {isAuthenticated ? (
             <>
-              <button
-                onClick={() => navigate('/user-blog-page')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
-              >
+              <Button onClick={() => navigate('/user-blog-page')}>
                 <span>My Blog</span>
                 <img src={assets.arrow} className="w-3" alt="arrow" />
-              </button>
+              </Button>
 
-              <button
-                onClick={() => navigate('/user-dashboard')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
-              >
+              <Button onClick={() => navigate('/user-dashboard')}>
                 <span>Profile</span>
                 <img src={assets.arrow} className="w-3" alt="arrow" />
-              </button>
+              </Button>
+
+              <Button onClick={handleLogout}>
+                <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                <span>Logout</span>
+              </Button>
             </>
           ) : (
-            <button
-              onClick={() => navigate('/login')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
-            >
+            <Button onClick={() => navigate('/login')}>
               <span>Login</span>
               <img src={assets.arrow} className="w-3" alt="arrow" />
-            </button>
+            </Button>
           )}
         </div>
 
+        {/* Mobile Toggle */}
         <button
           className="md:hidden focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -78,43 +91,44 @@ const Navbar = () => {
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-2">
           {isAuthenticated ? (
             <>
-              <button
+              <Button
                 onClick={() => {
                   navigate('/user-blog-page');
                   setMenuOpen(false);
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
               >
                 <span>My Blog</span>
                 <img src={assets.arrow} className="w-3" alt="arrow" />
-              </button>
-
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   navigate('/user-dashboard');
                   setMenuOpen(false);
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
               >
                 <span>Profile</span>
                 <img src={assets.arrow} className="w-3" alt="arrow" />
-              </button>
+              </Button>
+              <Button onClick={handleLogout}>
+                <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+                <span>Logout</span>
+              </Button>
             </>
           ) : (
-            <button
+            <Button
               onClick={() => {
                 navigate('/login');
                 setMenuOpen(false);
               }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
             >
               <span>Login</span>
               <img src={assets.arrow} className="w-3" alt="arrow" />
-            </button>
+            </Button>
           )}
         </div>
       )}

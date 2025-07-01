@@ -12,6 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from django.db import IntegrityError
 
 class CustomPageNumberPagination(PageNumberPagination):
     page_size=10
@@ -19,16 +20,32 @@ class CustomPageNumberPagination(PageNumberPagination):
     max_page_size = 100
 
 class BlogPostViewSet(viewsets.ModelViewSet):
+    queryset = BlogPost.objects.all().order_by('-timestamp')
     serializer_class = BlogPostSerializer
     permission_classes = [permissions.IsAuthenticated, IsAuthorOrAdminDeleteOnly]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
-    def get_queryset(self):
-        return BlogPost.objects.all().order_by('-timestamp')
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-    
+
+    def create(self, request, *args, **kwargs):
+        title = request.data.get('title', '').strip()
+        # 1) Pre‐check for duplicates (case‑insensitive)
+        if BlogPost.objects.filter(title__iexact=title).exists():
+            return Response(
+                {"title": ["Title already exists. Please choose another name."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 2) Fallback catch for race conditions
+        try:
+            return super().create(request, *args, **kwargs)
+        except IntegrityError:
+            return Response(
+                {"title": ["Title already exists. Please choose another name."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
     
 class UserBlogListView(generics.ListAPIView):
     serializer_class = BlogPostSerializer

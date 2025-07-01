@@ -26,13 +26,29 @@ const AddBlog = () => {
         setCategories([]);
       }
     };
-
     fetchCategories();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1) Front‑end word‑count check
+    const wordCount = content.trim().split(/\s+/).filter(w => w).length;
+    if (wordCount < 50) {
+      setMessage({
+        type: "error",
+        text: `Content is too short (${wordCount} words). Please write at least 50 words.`
+      });
+      return;
+    }
+
+    // 2) Confirmation prompt
+    if (!window.confirm("Are you sure you want to create this blog?")) {
+      return;
+    }
+
     setLoading(true);
+    setMessage(null);
 
     try {
       const formData = new FormData();
@@ -41,42 +57,35 @@ const AddBlog = () => {
       formData.append("status", status);
 
       const userData = JSON.parse(localStorage.getItem("user"));
-      console.log(userData, 'this is the userdatatat')
       const authorId = userData?.id;
-      if (authorId) {
-        formData.append("author", authorId);
-      } else {
-        console.warn("No user ID found in local storage!");
-      }
-
-      if (category) formData.append("category_id", category)
+      if (authorId) formData.append("author", authorId);
+      if (category) formData.append("category_id", category);
       if (image) formData.append("image", image);
 
-      const res = await api.post("/blog/blogs/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await api.post("/blog/blogs/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Blog created successfully!");
+      setMessage({ type: "success", text: "Blog created successfully." });
       setTitle("");
       setContent("");
       setCategory("");
       setImage(null);
       setStatus("draft");
-      setMessage({
-        type: "success",
-        text: "Blog created successfully.",
-      });
     } catch (error) {
       console.error(error);
-      const text = error.response?.data
-        ? JSON.stringify(error.response.data, null, 2)
-        : "An unexpected error occurred. Please try again.";
-      setMessage({
-        type: "error",
-        text,
-      });
+      let text = "Title already exists. Please choose another name.";
+      const data = error.response?.data;
+      if (data?.title) {
+        text = "Title already exists. Please choose another name.";
+      } else if (data?.content) {
+        text = data.content[0];
+      } else if (typeof data === "object") {
+        text = Object.values(data).flat().filter(msg => typeof msg === "string").join(" ");
+      } else if (typeof data === "string") {
+        text = data;
+      }
+      setMessage({ type: "error", text });
     } finally {
       setLoading(false);
     }
@@ -85,7 +94,6 @@ const AddBlog = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
-
       <main className="flex-grow flex justify-center px-4 sm:px-6 lg:px-8 py-10">
         <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6 sm:p-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
@@ -105,59 +113,53 @@ const AddBlog = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title field */}
             <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Title
-              </label>
+              <label className="block mb-2 font-medium text-gray-700">Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 placeholder="Enter blog title"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
 
+            {/* Content field */}
             <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Content
-              </label>
+              <label className="block mb-2 font-medium text-gray-700">Content</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={8}
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 placeholder="Write your blog post here..."
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
 
+            {/* Category, Status, Image fields (unchanged) */}
+
             <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Category
-              </label>
+              <label className="block mb-2 font-medium text-gray-700">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               >
                 <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Status
-              </label>
+              <label className="block mb-2 font-medium text-gray-700">Status</label>
               <select
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={e => setStatus(e.target.value)}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               >
                 <option value="draft">Draft</option>
@@ -166,13 +168,11 @@ const AddBlog = () => {
             </div>
 
             <div>
-              <label className="block mb-2 font-medium text-gray-700">
-                Upload Image (optional)
-              </label>
+              <label className="block mb-2 font-medium text-gray-700">Upload Image (optional)</label>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setImage(e.target.files[0])}
+                onChange={e => setImage(e.target.files[0])}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base"
               />
             </div>
@@ -181,9 +181,7 @@ const AddBlog = () => {
               type="submit"
               disabled={loading}
               className={`w-full text-center py-3 font-semibold rounded text-white text-sm sm:text-base ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
               {loading ? "Submitting..." : "Submit Blog"}
@@ -191,7 +189,6 @@ const AddBlog = () => {
           </form>
         </div>
       </main>
-
       <Footer />
     </div>
   );
