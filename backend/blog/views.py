@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -33,6 +34,12 @@ class UserBlogListView(generics.ListAPIView):
 
     def get_queryset(self):
         return BlogPost.objects.filter(author=self.request.user).order_by('-timestamp')
+    
+    
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size=10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
         
 
@@ -42,11 +49,15 @@ class BlogCategoryListViewSet(ListAPIView):
     permission_classes = [AllowAny]
     
     
+
+    
+    
 class PublicBlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BlogPostSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'content']
+    pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
         queryset = BlogPost.objects.filter(status='published')
