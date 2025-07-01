@@ -10,6 +10,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from rest_framework import filters
 
 
 
@@ -44,6 +45,8 @@ class BlogCategoryListViewSet(ListAPIView):
 class PublicBlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BlogPostSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content']
 
     def get_queryset(self):
         queryset = BlogPost.objects.filter(status='published')
@@ -51,6 +54,7 @@ class PublicBlogPostViewSet(viewsets.ReadOnlyModelViewSet):
         if category_id:
             queryset = queryset.filter(category__id=category_id)
         return queryset.order_by('-timestamp')
+
 
 class CommentListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer

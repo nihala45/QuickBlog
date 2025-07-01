@@ -19,16 +19,25 @@ const Navbar = () => {
           className="w-28 sm:w-44 cursor-pointer"
         />
 
-      
-        <div className="hidden md:flex">
+        <div className="hidden md:flex gap-4">
           {isAuthenticated ? (
-            <button
-              onClick={() => navigate('/user-blog-page')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
-            >
-              <span>Myblog</span>
-              <img src={assets.arrow} className="w-3" alt="arrow" />
-            </button>
+            <>
+              <button
+                onClick={() => navigate('/user-blog-page')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
+              >
+                <span>My Blog</span>
+                <img src={assets.arrow} className="w-3" alt="arrow" />
+              </button>
+
+              <button
+                onClick={() => navigate('/user-dashboard')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
+              >
+                <span>Profile</span>
+                <img src={assets.arrow} className="w-3" alt="arrow" />
+              </button>
+            </>
           ) : (
             <button
               onClick={() => navigate('/login')}
@@ -39,7 +48,6 @@ const Navbar = () => {
             </button>
           )}
         </div>
-
 
         <button
           className="md:hidden focus:outline-none"
@@ -70,20 +78,32 @@ const Navbar = () => {
         </button>
       </div>
 
-      
       {menuOpen && (
-        <div className="md:hidden px-4 pb-4">
+        <div className="md:hidden px-4 pb-4 flex flex-col gap-2">
           {isAuthenticated ? (
-            <button
-              onClick={() => {
-                navigate('/userdashboard');
-                setMenuOpen(false);
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
-            >
-              <span>Profile</span>
-              <img src={assets.arrow} className="w-3" alt="arrow" />
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  navigate('/user-blog-page');
+                  setMenuOpen(false);
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
+              >
+                <span>My Blog</span>
+                <img src={assets.arrow} className="w-3" alt="arrow" />
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate('/user-dashboard');
+                  setMenuOpen(false);
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex justify-center items-center space-x-2 transition"
+              >
+                <span>Profile</span>
+                <img src={assets.arrow} className="w-3" alt="arrow" />
+              </button>
+            </>
           ) : (
             <button
               onClick={() => {

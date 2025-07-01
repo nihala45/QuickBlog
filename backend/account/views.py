@@ -1,4 +1,4 @@
-from rest_framework import permissions, status
+from rest_framework import permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import UserSerializer
 import random
 from django.contrib.auth.hashers import make_password
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class UserRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -248,14 +248,6 @@ class ResetPasswordView(APIView):
 
        
     
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
     
 class AdminLoginView(APIView):
     def post(self,request):
@@ -274,27 +266,22 @@ class AdminLoginView(APIView):
             })
         return Response({'detail' : 'Invalid credentials or not an admin '}, status=status.HTTP_401_UNAUTHORIZED)
     
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     
-    
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete the authenticated user's profile.
+    """
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
-class UserProfileEditView(APIView):
-    permission_classes = [IsAuthenticated]
+    def get_object(self):
+        return self.request.user
 
-    def put(self, request):
-        user = request.user
-
-       
-        serializer = UserSerializer(user, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return Response(
+            {"detail": "Your account has been successfully deleted."},
+            status=status.HTTP_204_NO_CONTENT
+        )

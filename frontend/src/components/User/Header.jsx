@@ -26,7 +26,7 @@ const Header = () => {
         </p>
 
         {/* Search Form */}
-        <form className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-4 sm:gap-0 justify-center items-center max-w-lg mx-auto">
+        {/* <form className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-4 sm:gap-0 justify-center items-center max-w-lg mx-auto">
           <input
             type="text"
             placeholder="Search for blogs"
@@ -39,7 +39,7 @@ const Header = () => {
           >
             Search
           </button>
-        </form>
+        </form> */}
       </div>
     </div>
   );

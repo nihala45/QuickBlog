@@ -26,7 +26,7 @@ const UserManagement = () => {
     }
   };
 
-  // Handle search
+ 
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);

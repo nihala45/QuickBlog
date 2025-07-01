@@ -19,6 +19,8 @@ import UserManagement from "./pages/Admin/UserManagement";
 import ForgetPassword from "./pages/User/ForgetPassword";
 import VerifyForgotPasswordOtp from "./pages/User/VerifyForgotPasswordOtp";
 import ResetPassword from "./pages/User/ResetPassword";
+import UserDashboard from "./pages/User/UserDashboard";
+
 
 function App() {
   return (
@@ -32,6 +34,11 @@ function App() {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/forget-otp/:id" element={<VerifyForgotPasswordOtp />} />
         <Route path="/reset-password/:id" element={<ResetPassword />} />
+        <Route path="/user-dashboard" element={<UserDashboard />} />
+       
+
+        
+
 
 
 

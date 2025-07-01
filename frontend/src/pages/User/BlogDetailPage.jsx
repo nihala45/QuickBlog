@@ -56,7 +56,7 @@ const BlogDetailPage = () => {
     if (!window.confirm('Are you sure you want to delete this blog?')) return;
     try {
       await api.delete(`/blog/blogs/${id}/`);
-      navigate('/blogs');
+      navigate('/');
     } catch (error) {
       console.error(error);
       alert('Failed to delete blog.');
