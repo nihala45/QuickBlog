@@ -16,12 +16,11 @@ const Sidebar = () => {
     { name: 'Manage Categories', path: '/admin/manage-categories', icon: FolderIcon },
     { name: 'Manage Blog', path: '/admin/manage-blog', icon: DocumentTextIcon },
     { name: 'Manage Draft', path: '/admin/draft-blog', icon: DocumentTextIcon },
-
   ];
 
   return (
-    <aside className="bg-gradient-to-b from-gray-800 to-gray-700 text-gray-200 h-screen w-64 hidden md:flex flex-col">
-      <div className="px-6 py-6 text-2xl font-bold text-white">
+    <aside className="bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800 h-screen w-64 flex flex-col">
+      <div className="px-6 py-6 text-2xl font-bold text-gray-800">
         Admin Panel
       </div>
       <nav className="flex-1 space-y-1 px-2">
@@ -30,15 +29,15 @@ const Sidebar = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium hover:bg-gray-600/60 hover:text-white transition ${
+              `group flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium hover:bg-gray-200 hover:text-gray-900 transition ${
                 isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600'
               }`
             }
           >
             <item.icon className="h-5 w-5" />
-            <span className="">{item.name}</span>
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </nav>
