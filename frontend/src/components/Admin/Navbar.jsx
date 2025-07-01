@@ -15,9 +15,9 @@ const AdminNavbar = () => {
   return (
     <nav className="bg-gradient-to-r from-gray-50 to-gray-100 shadow-lg border-b border-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex flex-wrap md:flex-nowrap justify-between items-center h-auto md:h-16 gap-y-4 py-4 md:py-0">
           {/* Left: logo */}
-          <div className="flex items-center flex-1">
+          <div className="flex items-center flex-1 justify-center md:justify-start">
             <div
               onClick={() => navigate('/admin-dashboard')}
               className="flex items-center cursor-pointer"
@@ -43,10 +43,10 @@ const AdminNavbar = () => {
           </div>
 
           {/* Right: user info and login/logout */}
-          <div className="flex items-center flex-1 justify-end gap-4">
+          <div className="flex items-center flex-1 justify-center md:justify-end gap-4">
             {isAuthenticated ? (
               <>
-                <span className="hidden sm:block text-gray-700 text-sm">
+                <span className="hidden sm:block text-gray-700 text-sm text-center md:text-left">
                   Hi, <span className="font-semibold text-blue-700">{user?.username}</span>
                 </span>
                 <button

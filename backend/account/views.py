@@ -19,7 +19,6 @@ class UserRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        print("REQUEST DATA →", request.data)
 
         email = request.data.get("email", "").strip().lower()
         username = request.data.get("username", "").strip()
@@ -49,7 +48,6 @@ class UserRegisterView(APIView):
         otp_secret = pyotp.random_base32()
         totp = pyotp.TOTP(otp_secret, interval=300)  # OTP valid for 5 minutes
         otp = totp.now()
-        print("Generated OTP →", otp)
 
         if existing_unverified:
             existing_unverified.username = username
@@ -143,7 +141,6 @@ class LoginView(APIView):
             return Response({'error': 'Invalid credentials'}, status=400)
 
         if not user.is_email_verified:
-            print(f"Blocked login for {user.email} because email is not verified.")
             return Response({'error': 'Email is not verified. Please verify your email to continue.'}, status=403)
 
 
@@ -172,7 +169,6 @@ class ForgotPasswordView(APIView):
 
             # Generate a 6-digit numeric OTP
             otp = str(random.randint(100000, 999999))
-            print("Generated OTP Forget →", otp)
 
             # Save it to the user model
             user.email_otp = otp
@@ -256,8 +252,7 @@ class AdminLoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(email=email,password = password)
-        print(email,password)
-        print(user)
+        
 
         if user is not None and user.is_superuser:
             refresh = RefreshToken.for_user(user)

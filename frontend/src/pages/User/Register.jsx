@@ -91,7 +91,7 @@ const Register = () => {
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-sm sm:max-w-md md:max-w-lg">
         <div className="mb-6 text-center">
           <img
-            src="/favicon.ico"
+            src="/favicon.svg"
             alt="QuickBlog"
             className="w-12 h-12 mx-auto mb-2"
           />

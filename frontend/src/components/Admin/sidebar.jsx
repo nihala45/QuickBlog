@@ -1,7 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-
-// Heroicons (Outline style)
 import {
   HomeIcon,
   UsersIcon,
@@ -19,7 +17,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800 h-screen w-64 flex flex-col">
+    <aside className="hidden md:flex bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800 h-screen w-64 flex-col">
       <div className="px-6 py-6 text-2xl font-bold text-gray-800">
         Admin Panel
       </div>
