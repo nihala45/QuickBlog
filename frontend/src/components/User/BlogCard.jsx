@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/api';
 
-const BlogCard = ({ blog, onDelete }) => {
+const BlogCard = ({ blog }) => {
   const navigate = useNavigate();
 
   const {
@@ -16,13 +15,20 @@ const BlogCard = ({ blog, onDelete }) => {
     author,
   } = blog;
 
-  
-
-  
+  const handleClick = () => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      // User is logged in → go to blog detail
+      navigate(`/blog-detail/${id}`);
+    } else {
+      // User not logged in → go to login
+      navigate('/login');
+    }
+  };
 
   return (
     <div
-      onClick={() => navigate(`/blog-detail/${id}`)}
+      onClick={handleClick}
       className="flex flex-col h-full rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer bg-white"
     >
       {image && (
@@ -71,9 +77,7 @@ const BlogCard = ({ blog, onDelete }) => {
           </div>
         </div>
 
-        <div className="flex gap-2 mt-4">
-         
-        </div>
+        <div className="flex gap-2 mt-4"></div>
       </div>
     </div>
   );

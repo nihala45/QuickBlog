@@ -83,12 +83,12 @@ const UserBlogCard = ({ blog, onDelete }) => {
           </div>
         </div>
 
-        <button
+        {/* <button
           onClick={handleDelete}
           className="mt-4 w-full py-2 text-center text-sm rounded border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition duration-200"
         >
           Delete Blog
-        </button>
+        </button> */}
       </div>
     </div>
   );

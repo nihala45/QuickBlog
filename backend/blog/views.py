@@ -13,7 +13,10 @@ from rest_framework.views import APIView
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 
-
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size=10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class BlogPostViewSet(viewsets.ModelViewSet):
     serializer_class = BlogPostSerializer
@@ -27,19 +30,18 @@ class BlogPostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
     
     
-
 class UserBlogListView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomPageNumberPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content']
 
     def get_queryset(self):
         return BlogPost.objects.filter(author=self.request.user).order_by('-timestamp')
     
     
-class CustomPageNumberPagination(PageNumberPagination):
-    page_size=10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+
 
         
 

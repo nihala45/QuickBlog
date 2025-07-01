@@ -45,7 +45,15 @@ const BlogDetailPage = () => {
   const fetchComments = async () => {
     try {
       const res = await api.get(`/blog/blogs/${id}/comments/`);
-      setComments(res.data);
+      const data = res.data;
+
+      const commentList = Array.isArray(data)
+        ? data
+        : Array.isArray(data.results)
+          ? data.results
+          : [];
+
+      setComments(commentList);
     } catch (error) {
       console.error(error);
       alert('Failed to load comments.');
@@ -88,21 +96,20 @@ const BlogDetailPage = () => {
     }
   };
 
- const addComment = async (e) => {
-  e.preventDefault();
-  try {
-    await api.post(`/blog/blogs/${id}/comments/`, {
-      blog: id,
-      text: content,
-    });
-    setContent('');
-    fetchComments();
-  } catch (error) {
-    console.error(error);
-    alert('Failed to add comment.');
-  }
-};
-
+  const addComment = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/blog/blogs/${id}/comments/`, {
+        blog: id,
+        text: content,
+      });
+      setContent('');
+      fetchComments();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to add comment.');
+    }
+  };
 
   const stripHtmlTags = (html) => {
     const tempDiv = document.createElement('div');
