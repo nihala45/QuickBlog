@@ -20,6 +20,7 @@ import ForgetPassword from "./pages/User/ForgetPassword";
 import VerifyForgotPasswordOtp from "./pages/User/VerifyForgotPasswordOtp";
 import ResetPassword from "./pages/User/ResetPassword";
 import UserDashboard from "./pages/User/UserDashboard";
+import DraftViewPage from "./pages/Admin/DraftViewPage";
 
 
 function App() {
@@ -43,15 +44,19 @@ function App() {
 
 
         
-        <Route path="/adminlogin" element={<AdminLogin/>}/>
-        <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+        <Route path="/admin/login" element={<AdminLogin />} />
+       
+
+        
 
         <Route path="/admin" element={<Layout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="manage-users" element={<UserManagement />} />
           <Route path="manage-categories" element={<ManageCategories/>} />
           <Route path="manage-blog" element={<ManageBlog/>} />
+         <Route path="draft-blog" element={<DraftViewPage />} />
         </Route>
+        
        <Route path="/user-blog-page" element={<UserBlogPage />} />
        <Route path="/add-blog" element={<AddBlog />} />
 

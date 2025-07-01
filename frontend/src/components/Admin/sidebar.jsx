@@ -15,6 +15,8 @@ const Sidebar = () => {
     { name: 'Manage Users', path: '/admin/manage-users', icon: UsersIcon },
     { name: 'Manage Categories', path: '/admin/manage-categories', icon: FolderIcon },
     { name: 'Manage Blog', path: '/admin/manage-blog', icon: DocumentTextIcon },
+    { name: 'Manage Draft', path: '/admin/draft-blog', icon: DocumentTextIcon },
+
   ];
 
   return (

@@ -6,7 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [count, setCount] = useState(0);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 10;
@@ -15,45 +17,41 @@ const UserManagement = () => {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (pageNumber = 1, query = '') => {
     try {
-      const response = await api.get('/adminside/users/');
-      setUsers(response.data);
-      setFilteredUsers(response.data);
+      const params = {
+        page: pageNumber,
+        page_size: itemsPerPage,
+      };
+      if (query) {
+        params.search = query;
+      }
+      const response = await api.get('adminside/users/', { params });
+      setUsers(response.data.results);
+      setCount(response.data.count);
+      setNextPage(response.data.next);
+      setPrevPage(response.data.previous);
+      setPage(pageNumber);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Error fetching users');
     }
   };
 
- 
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    if (!query) {
-      setFilteredUsers(users);
-      setPage(1);
-    } else {
-      const filtered = users.filter((u) =>
-        u.username.toLowerCase().includes(query.toLowerCase()) ||
-        u.email.toLowerCase().includes(query.toLowerCase()) ||
-        (u.phone && u.phone.toLowerCase().includes(query.toLowerCase()))
-      );
-      setFilteredUsers(filtered);
-      setPage(1);
-    }
+    fetchUsers(1, query);
   };
 
   const handleBlock = async (id) => {
-    const confirmBlock = window.confirm(
-      'Are you sure you want to block this user?'
-    );
+    const confirmBlock = window.confirm('Are you sure you want to block this user?');
     if (!confirmBlock) return;
 
     try {
-      await api.post(`/adminside/users/${id}/block/`);
+      await api.post(`adminside/users/${id}/block/`);
       toast.success('User blocked successfully');
-      fetchUsers();
+      fetchUsers(page, searchQuery);
     } catch (error) {
       console.error('Error blocking user:', error);
       toast.error('Failed to block user');
@@ -61,32 +59,34 @@ const UserManagement = () => {
   };
 
   const handleUnblock = async (id) => {
-    const confirmUnblock = window.confirm(
-      'Are you sure you want to unblock this user?'
-    );
+    const confirmUnblock = window.confirm('Are you sure you want to unblock this user?');
     if (!confirmUnblock) return;
 
     try {
-      await api.post(`/adminside/users/${id}/unblock/`);
+      await api.post(`adminside/users/${id}/unblock/`);
       toast.success('User unblocked successfully');
-      fetchUsers();
+      fetchUsers(page, searchQuery);
     } catch (error) {
       console.error('Error unblocking user:', error);
       toast.error('Failed to unblock user');
     }
   };
 
-  const paginatedUsers = filteredUsers.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  const handleNextPage = () => {
+    if (nextPage) {
+      fetchUsers(page + 1, searchQuery);
+    }
+  };
 
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const handlePrevPage = () => {
+    if (prevPage) {
+      fetchUsers(page - 1, searchQuery);
+    }
+  };
 
   return (
     <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
       <ToastContainer />
-
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800">
         User Management
       </h1>
@@ -113,15 +113,11 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user) => (
-              <tr
-                key={user.id}
-                className="border-t hover:bg-gray-50 transition"
-              >
+            {users.map((user) => (
+              <tr key={user.id} className="border-t hover:bg-gray-50 transition">
                 <td className="px-3 py-3 break-all">{user.username}</td>
                 <td className="px-3 py-3 break-all">{user.email}</td>
                 <td className="px-3 py-3 break-all">{user.phone || '-'}</td>
-
                 <td className="px-3 py-3">
                   {user.is_active ? (
                     <button
@@ -142,12 +138,9 @@ const UserManagement = () => {
               </tr>
             ))}
 
-            {filteredUsers.length === 0 && (
+            {users.length === 0 && (
               <tr>
-                <td
-                  colSpan="4"
-                  className="text-center px-3 py-5 text-gray-500"
-                >
+                <td colSpan="4" className="text-center px-3 py-5 text-gray-500">
                   No users found.
                 </td>
               </tr>
@@ -156,22 +149,23 @@ const UserManagement = () => {
         </table>
       </div>
 
-      {totalPages > 1 && (
+      {/* Pagination Controls */}
+      {count > itemsPerPage && (
         <div className="mt-6 flex justify-center items-center gap-2">
           <button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
+            onClick={handlePrevPage}
+            disabled={!prevPage}
             className="flex items-center gap-1 text-primary hover:underline disabled:text-gray-400"
           >
             <ChevronLeftIcon className="w-4 h-4" />
             Prev
           </button>
           <span className="text-sm text-gray-600">
-            Page {page} of {totalPages}
+            Page {page} of {Math.ceil(count / itemsPerPage)}
           </span>
           <button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
+            onClick={handleNextPage}
+            disabled={!nextPage}
             className="flex items-center gap-1 text-primary hover:underline disabled:text-gray-400"
           >
             Next

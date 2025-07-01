@@ -12,6 +12,8 @@ from .serializers import UserSerializer
 import random
 from django.contrib.auth.hashers import make_password
 from rest_framework.parsers import MultiPartParser, FormParser
+from blog.views import CustomPageNumberPagination
+
 
 class UserRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
