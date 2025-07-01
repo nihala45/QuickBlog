@@ -32,7 +32,6 @@ const AddBlog = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1) Front‑end word‑count check
     const wordCount = content.trim().split(/\s+/).filter(w => w).length;
     if (wordCount < 50) {
       setMessage({
@@ -42,7 +41,6 @@ const AddBlog = () => {
       return;
     }
 
-    // 2) Confirmation prompt
     if (!window.confirm("Are you sure you want to create this blog?")) {
       return;
     }
@@ -95,8 +93,8 @@ const AddBlog = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
       <main className="flex-grow flex justify-center px-4 sm:px-6 lg:px-8 py-10">
-        <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6 sm:p-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+        <div className="w-full max-w-3xl bg-white shadow-xl rounded-lg p-6 sm:p-10">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-center text-gray-800 mb-10">
             Add New Blog
           </h1>
 
@@ -113,40 +111,42 @@ const AddBlog = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title field */}
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">Title</label>
+            <div className="flex flex-col">
+              <label className="mb-2 font-semibold text-gray-700 text-sm sm:text-base">
+                Title
+              </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 placeholder="Enter blog title"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Content field */}
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">Content</label>
+            <div className="flex flex-col">
+              <label className="mb-2 font-semibold text-gray-700 text-sm sm:text-base">
+                Content
+              </label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={8}
                 required
                 placeholder="Write your blog post here..."
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Category, Status, Image fields (unchanged) */}
-
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">Category</label>
+            <div className="flex flex-col">
+              <label className="mb-2 font-semibold text-gray-700 text-sm sm:text-base">
+                Category
+              </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select Category</option>
                 {categories.map(cat => (
@@ -155,33 +155,39 @@ const AddBlog = () => {
               </select>
             </div>
 
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">Status</label>
+            <div className="flex flex-col">
+              <label className="mb-2 font-semibold text-gray-700 text-sm sm:text-base">
+                Status
+              </label>
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
             </div>
 
-            <div>
-              <label className="block mb-2 font-medium text-gray-700">Upload Image (optional)</label>
+            <div className="flex flex-col">
+              <label className="mb-2 font-semibold text-gray-700 text-sm sm:text-base">
+                Upload Image (optional)
+              </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={e => setImage(e.target.files[0])}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full text-center py-3 font-semibold rounded text-white text-sm sm:text-base ${
-                loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+              className={`w-full py-3 text-center font-semibold rounded text-white text-sm sm:text-base transition-all duration-300 ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
               }`}
             >
               {loading ? "Submitting..." : "Submit Blog"}

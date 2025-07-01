@@ -112,12 +112,12 @@ const OtpVerify = () => {
           </button>
         </form>
 
-        <p className="text-sm text-gray-600 text-center mt-4">
+        {/* <p className="text-sm text-gray-600 text-center mt-4">
           Didn’t receive the code?{' '}
           <span className="text-blue-600 hover:underline cursor-pointer">
             Resend
           </span>
-        </p>
+        </p> */}
       </div>
     </div>
   );

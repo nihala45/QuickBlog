@@ -1,12 +1,16 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import logo from '../../assets/logo.svg';
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
+  };
 
   return (
     <nav className="bg-gradient-to-r from-gray-50 to-gray-100 shadow-lg border-b border-gray-300">
@@ -38,22 +42,29 @@ const AdminNavbar = () => {
             </span>
           </div>
 
-          {/* Right: user info and logout */}
+          {/* Right: user info and login/logout */}
           <div className="flex items-center flex-1 justify-end gap-4">
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <>
                 <span className="hidden sm:block text-gray-700 text-sm">
                   Hi, <span className="font-semibold text-blue-700">{user?.username}</span>
                 </span>
                 <button
-                  onClick={logout}
-                  className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={handleLogout}
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   aria-label="Logout"
                 >
-                  <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                  <span className="hidden sm:inline">Logout</span>
+                  Logout
                 </button>
               </>
+            ) : (
+              <button
+                onClick={() => navigate('/admin/login')}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                aria-label="Login"
+              >
+                Login
+              </button>
             )}
           </div>
         </div>

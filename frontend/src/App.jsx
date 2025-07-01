@@ -21,6 +21,7 @@ import VerifyForgotPasswordOtp from "./pages/User/VerifyForgotPasswordOtp";
 import ResetPassword from "./pages/User/ResetPassword";
 import UserDashboard from "./pages/User/UserDashboard";
 import DraftViewPage from "./pages/Admin/DraftViewPage";
+import ViewDraftBlog from "./pages/User/ViewDraftBlog";
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
         <Route path="/forget-otp/:id" element={<VerifyForgotPasswordOtp />} />
         <Route path="/reset-password/:id" element={<ResetPassword />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
+        <Route path="/user-draft" element={<ViewDraftBlog />} />
+
        
 
         
