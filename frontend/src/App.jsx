@@ -37,7 +37,7 @@ import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 const App = () => {
   return (
     <Routes>
-      {/* Public pages */}
+   
       <Route path="/" element={<Home />} />
       <Route
         path="/login"
@@ -60,7 +60,7 @@ const App = () => {
       <Route path="/forget-otp/:id" element={<VerifyForgotPasswordOtp />} />
       <Route path="/reset-password/:id" element={<ResetPassword />} />
 
-      {/* User protected routes */}
+    
       <Route
         path="/user-dashboard"
         element={
@@ -102,7 +102,7 @@ const App = () => {
         }
       />
 
-      {/* Admin pages */}
+   
       <Route
         path="/admin/login"
         element={
