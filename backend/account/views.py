@@ -283,12 +283,3 @@ class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
         )
         
         
-
-from rest_framework.decorators import api_view, permission_classes
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def home_page_view(request):
-    return Response(
-        {"message": "Hello from backend"},
-        status=status.HTTP_200_OK
-    )
