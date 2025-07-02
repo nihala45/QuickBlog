@@ -281,3 +281,14 @@ class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
             {"detail": "Your account has been successfully deleted."},
             status=status.HTTP_204_NO_CONTENT
         )
+        
+        
+
+from rest_framework.decorators import api_view, permission_classes
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def home_page_view(request):
+    return Response(
+        {"message": "Hello from backend"},
+        status=status.HTTP_200_OK
+    )
