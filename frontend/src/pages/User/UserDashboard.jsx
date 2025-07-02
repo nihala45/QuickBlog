@@ -130,7 +130,7 @@ const UserDashboard = () => {
               </div>
 
               <div className="flex-1 mt-6 md:mt-0 w-full">
-                {/* Username */}
+              
                 <div className="flex justify-between items-center border-b pb-4 mb-4">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Username</span>
@@ -144,7 +144,7 @@ const UserDashboard = () => {
                   </button>
                 </div>
 
-                {/* Email (not editable) */}
+             
                 <div className="flex justify-between items-center border-b pb-4 mb-4">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Email</span>
@@ -152,7 +152,7 @@ const UserDashboard = () => {
                   </div>
                 </div>
 
-                {/* Phone */}
+              
                 <div className="flex justify-between items-center">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Phone</span>

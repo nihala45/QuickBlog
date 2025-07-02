@@ -6,7 +6,7 @@ import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -23,10 +23,11 @@ const Navbar = () => {
     </button>
   );
 
+  const isUser = isAuthenticated && user && !user.is_superuser;
+
   return (
     <nav className="bg-white shadow-md">
       <div className="mx-4 sm:mx-8 xl:mx-32 flex justify-between items-center py-4">
-    
         <img
           onClick={() => navigate('/')}
           src={assets.logo}
@@ -34,9 +35,8 @@ const Navbar = () => {
           className="w-28 sm:w-44 cursor-pointer"
         />
 
-       
         <div className="hidden md:flex gap-4 items-center">
-          {isAuthenticated ? (
+          {isUser ? (
             <>
               <Button onClick={() => navigate('/user-blog-page')}>
                 <span>My Blog</span>
@@ -53,6 +53,12 @@ const Navbar = () => {
                 <span>Logout</span>
               </Button>
             </>
+          ) : isAuthenticated ? (
+            // If authenticated but admin
+            <Button onClick={handleLogout}>
+              <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+              <span>Logout</span>
+            </Button>
           ) : (
             <Button onClick={() => navigate('/login')}>
               <span>Login</span>
@@ -92,7 +98,7 @@ const Navbar = () => {
 
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-2">
-          {isAuthenticated ? (
+          {isUser ? (
             <>
               <Button
                 onClick={() => {
@@ -112,11 +118,26 @@ const Navbar = () => {
                 <span>Profile</span>
                 <img src={assets.arrow} className="w-3" alt="arrow" />
               </Button>
-              <Button onClick={handleLogout}>
+              <Button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+              >
                 <ArrowLeftOnRectangleIcon className="w-5 h-5" />
                 <span>Logout</span>
               </Button>
             </>
+          ) : isAuthenticated ? (
+            <Button
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+            >
+              <ArrowLeftOnRectangleIcon className="w-5 h-5" />
+              <span>Logout</span>
+            </Button>
           ) : (
             <Button
               onClick={() => {

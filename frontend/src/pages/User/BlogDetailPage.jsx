@@ -177,7 +177,7 @@ const BlogDetailPage = () => {
 
               {isAuthor && (
                 <button
-                  onClick={() => navigate(`/blog/edit/${id}`)}
+                  onClick={() => navigate(`/user/blog-edit/${id}`)}
                   className="px-4 py-2 text-xs sm:text-sm rounded border border-primary text-primary hover:bg-primary hover:text-white transition"
                 >
                   Edit Blog

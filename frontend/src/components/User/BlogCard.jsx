@@ -19,7 +19,7 @@ const BlogCard = ({ blog }) => {
     const token = localStorage.getItem('access_token');
     if (token) {
     
-      navigate(`/blog-detail/${id}`);
+      navigate(`/user/blog-detail/${id}`);
     } else {
      
       navigate('/login');

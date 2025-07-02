@@ -34,7 +34,7 @@ const UserBlogCard = ({ blog, onDelete }) => {
 
   return (
     <div
-      onClick={() => navigate(`/blog-detail/${id}`)}
+      onClick={() => navigate(`/user/blog-detail/${id}`)}
       className="flex flex-col h-full rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition duration-300 cursor-pointer bg-white"
     >
       {image && (

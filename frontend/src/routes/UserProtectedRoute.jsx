@@ -7,10 +7,8 @@ const UserProtectedRoute = ({ children }) => {
 
   if (isAuthenticated && user && !user.is_superuser) {
     return children;
-  } else if (isAuthenticated && user && user.is_superuser) {
-    return <Navigate to="/admin/home" />;
   } else {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 };
 

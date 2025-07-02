@@ -13,7 +13,7 @@ import {
   HeartIcon as HeartSolid,
 } from '@heroicons/react/24/solid';
 
-const BlogDetailPage = () => {
+const AdminBlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -348,4 +348,4 @@ const BlogDetailPage = () => {
   );
 };
 
-export default BlogDetailPage;
+export default AdminBlogDetail;

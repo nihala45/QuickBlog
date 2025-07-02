@@ -82,7 +82,7 @@ const EditBlogPage = () => {
         },
       });
       alert('Blog updated successfully!');
-      navigate(`/blog-detail/${id}`);
+      navigate(`/user/blog-detail/${id}`);
     } catch (error) {
       console.error(error);
       alert('Failed to update blog. Please check your inputs.');
