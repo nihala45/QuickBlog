@@ -46,7 +46,7 @@ class UserRegisterView(APIView):
         existing_unverified = Users.objects.filter(email=email, is_email_verified=False).first()
 
         otp_secret = pyotp.random_base32()
-        totp = pyotp.TOTP(otp_secret, interval=300)  # OTP valid for 5 minutes
+        totp = pyotp.TOTP(otp_secret, interval=300)  
         otp = totp.now()
 
         if existing_unverified:
@@ -167,10 +167,9 @@ class ForgotPasswordView(APIView):
         try:
             user = Users.objects.get(email=email, is_email_verified=True)
 
-            # Generate a 6-digit numeric OTP
             otp = str(random.randint(100000, 999999))
 
-            # Save it to the user model
+          
             user.email_otp = otp
             user.save()
 

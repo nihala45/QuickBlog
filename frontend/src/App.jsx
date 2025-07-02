@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// Unprotected pages
+
 import Home from "./pages/User/Home";
 import Login from "./pages/User/Login";
 import Register from "./pages/User/Register";
@@ -12,12 +12,11 @@ import ResetPassword from "./pages/User/ResetPassword";
 import UserBlogPage from './pages/User/UserBlogPage';
 import BlogDetailPage from "./pages/User/BlogDetailPage";
 
-// Blog pages (User)
+
 import AddBlog from "./pages/User/AddBlog";
 import EditBlogPage from "./pages/User/EditBlogPage";
 import UserDashboard from "./pages/User/UserDashboard";
 
-// Admin pages
 import AdminLogin from "./pages/Admin/AdminLogin";
 import Layout from "./pages/Admin/Layout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -29,7 +28,7 @@ import AdminBlogDetail from "./pages/Admin/AdminBlogDetail";
 import AdminEditBlog from "./pages/Admin/AdminEditBlog";
 
 
-// Guards
+
 import UserProtectedRoute from "./routes/UserProtectedRoute";
 import UserLoginRedirect from "./routes/UserLoginRedirect";
 import AdminLoginRedirect from "./routes/AdminLoginRedirect";
