@@ -26,7 +26,8 @@ const Navbar = () => {
   const isUser = isAuthenticated && user && !user.is_superuser;
 
   return (
-    <nav className="bg-white shadow-md">
+   <nav className="bg-white shadow-md sticky top-0 z-50">
+
       <div className="mx-4 sm:mx-8 xl:mx-32 flex justify-between items-center py-4">
         <img
           onClick={() => navigate('/')}
