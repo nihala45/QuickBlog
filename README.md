@@ -78,7 +78,7 @@ python manage.py migrate
 6. Create Superuser
 python manage.py createsuperuser
 
-9.Start Django Development Server
+7.Start Django Development Server
 python manage.py runserver
 Server runs at:
 http://127.0.0.1:8000/
@@ -88,10 +88,10 @@ Frontend Setup (Vite + Tailwind CSS)
 npm create vite@latest frontend
 cd frontend
 
-3. Install Node Dependencies
+2. Install Node Dependencies
 npm install
 
-4. Configure Tailwind CSS
+3. Configure Tailwind CSS
 Install Tailwind CSS
 npm install tailwindcss @tailwindcss/vite
 
@@ -108,5 +108,5 @@ Import Tailwind CSS
 Add an @import to your CSS file that imports Tailwind CSS.
 @import "tailwindcss";
 
-5. Run Vite Development Server
+4. Run Vite Development Server
 http://localhost:5173/
