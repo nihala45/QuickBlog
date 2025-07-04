@@ -44,6 +44,7 @@ Users can register, log in, and create, edit, and delete blog posts. The platfor
 ### 1. Clone the Repository
 
 git clone https://github.com/nihala45/QuickBlog.git
+
 cd QuickBlog
 
 2. Create Python Virtual Environment
